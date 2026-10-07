@@ -192,10 +192,10 @@ table.t tr.pick td{background:rgba(244,222,92,.06)}
 .offer h3{font:700 22px/1.15 var(--display);letter-spacing:-.01em;text-wrap:balance}
 .offer .emp{color:var(--slip-ink-2)}
 .offer .tag{border-color:var(--slip-rule);color:var(--slip-ink-2)}
-.offer dl{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 28px}
-.offer dl div{padding-block:7px;border-top:1px solid var(--slip-2);display:flex;flex-direction:column}
-.offer dt{color:var(--slip-ink-2);font-size:13.5px}
-.offer dd{margin:0;font-weight:500}
+.offer dl{margin:0;display:flex;flex-direction:column}
+.offer dl div{padding-block:8px;border-top:1px solid var(--slip-2);display:grid;grid-template-columns:170px 1fr;gap:2px 16px;align-items:baseline}
+.offer dt{color:var(--slip-ink-2);font-size:14px}
+.offer dd{margin:0;font-weight:500;max-width:62ch}
 .offer p{margin:0;max-width:70ch}
 .offer .cv{background:var(--slip-2);border-radius:2px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .offer .cv p{font-size:15px}
@@ -205,7 +205,7 @@ table.t tr.pick td{background:rgba(244,222,92,.06)}
 .offer .btn.ghost:hover{border-color:var(--slip-ink)}
 .offers{display:flex;flex-direction:column;gap:26px}
 .sal{background:var(--desk-2);border-radius:4px;padding:14px 16px 10px;position:relative}
-.sal .rw{display:grid;grid-template-columns:minmax(120px,32%) 1fr 96px;gap:12px;align-items:center;padding-block:8px;border-top:1px solid var(--rule-soft);position:relative}
+.sal .rw{display:grid;grid-template-columns:minmax(120px,30%) 1fr 112px;gap:12px;align-items:center;padding-block:8px;border-top:1px solid var(--rule-soft);position:relative}
 .sal .rw:first-of-type{border-top:0}
 .sal .track{position:relative;height:12px}
 .sal .band{position:absolute;top:-8px;bottom:-8px;background:rgba(244,222,92,.14)}
@@ -242,6 +242,7 @@ details.more[open] summary{margin-bottom:12px}
   .sal .rw{grid-template-columns:1fr 84px}
   .sal .rw .lbl{grid-column:1 / -1}
   .offer{padding:20px 18px}
+  .offer dl div{grid-template-columns:1fr}
   .top .etat{margin-left:0;flex-basis:100%}
 }
 </style>
@@ -773,15 +774,17 @@ function blocSalaires(j){
   if(!avec.length){ sec.append(h("p",{class:"lede",text:"Aucune de ces offres n'affiche de salaire."+(cible?" Ta fourchette à annoncer : "+cible[0]+" à "+cible[1]+" k€ brut par an.":"")})); return sec; }
   const vals = avec.flatMap(o=>[o.salaire_min,o.salaire_max]).filter(isNum).concat(cible||[]);
   const lo = Math.floor((Math.min(...vals)-2)/5)*5, hi = Math.ceil((Math.max(...vals)+2)/5)*5, X = v => (v-lo)/(hi-lo)*100;
+  const k = v => num(v, v%1?1:0);
+  const estime = O.some(o=>/estimation/i.test(o.salaire_texte||""));
   const box = h("div",{class:"sal"});
   for(const o of O){
     const a = isNum(o.salaire_min)?o.salaire_min:o.salaire_max, b = isNum(o.salaire_max)?o.salaire_max:o.salaire_min;
-    box.append(h("div",{class:"rw",tabindex:"0","data-tip":propre(o.employeur)+" : "+(isNum(a)?(a===b?a+" k€":a+" à "+b+" k€")+" brut par an":"salaire non indiqué")},
+    box.append(h("div",{class:"rw",tabindex:"0","data-tip":propre(o.employeur)+" : "+(isNum(a)?(a===b?k(a)+" k€":k(a)+" à "+k(b)+" k€")+" brut par an":"salaire non indiqué")+(/estimation/i.test(o.salaire_texte||"")?" (estimation du site)":"")},
       h("div",{class:"lbl",text:propre(o.employeur)}),
       h("div",{class:"track"}, cible?h("div",{class:"band",style:"left:"+X(cible[0])+"%;width:"+(X(cible[1])-X(cible[0]))+"%"}):null, isNum(a)?h("div",{class:"rng",style:"left:"+X(a)+"%;width:"+Math.max(0,X(b)-X(a))+"%"}):null),
-      h("div",{class:"val"+(isNum(a)?"":" na"),style:isNum(a)?"":"color:var(--ink-3)",text:isNum(a)?(a===b?a+" k€":a+"–"+b+" k€"):"non indiqué"})));
+      h("div",{class:"val"+(isNum(a)?"":" na"),style:isNum(a)?"":"color:var(--ink-3)",text:isNum(a)?(a===b?k(a)+" k€":k(a)+"–"+k(b)+" k€")+(/estimation/i.test(o.salaire_texte||"")?" *":""):"non indiqué"})));
   }
-  box.append(h("div",{class:"legend",style:"padding-top:8px"}, h("span",{}, h("i",{style:"background:var(--s1)"}),"Salaire affiché, en k€ brut par an"), cible?h("span",{}, h("i",{style:"background:rgba(244,222,92,.4)"}),"Ta cible : "+cible[0]+" à "+cible[1]+" k€"):null, h("span",{text:"Échelle de "+lo+" à "+hi+" k€"})));
+  box.append(h("div",{class:"legend",style:"padding-top:8px"}, h("span",{}, h("i",{style:"background:var(--s1)"}),"Salaire affiché, en k€ brut par an"), cible?h("span",{}, h("i",{style:"background:rgba(244,222,92,.4)"}),"Ta cible : "+cible[0]+" à "+cible[1]+" k€"):null, h("span",{text:"Échelle de "+lo+" à "+hi+" k€"}), estime?h("span",{text:"* estimation du site d'annonces, pas de l'employeur"}):null));
   sec.append(box);
   return sec;
 }

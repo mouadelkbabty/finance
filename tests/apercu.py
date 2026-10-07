@@ -7,7 +7,7 @@ racine = pathlib.Path(__file__).resolve().parent.parent
 sortie = pathlib.Path(sys.argv[1]); sortie.mkdir(parents=True, exist_ok=True)
 page_html = (racine / "site/index.html").read_text(encoding="utf-8")
 floss = json.loads((racine / "data/exemple_floss.json").read_text(encoding="utf-8"))
-job = json.loads((racine / "data/exemple_job.json").read_text(encoding="utf-8"))
+job = json.loads(pathlib.Path(sys.argv[2]).read_text(encoding="utf-8")) if len(sys.argv) > 2 else json.loads((racine / "data/exemple_job.json").read_text(encoding="utf-8"))
 store = {
   "config/main": {"floss_trigger": "trig_a", "job_trigger": "trig_b", "cibles": {"grenoble": [42, 45]}, "mots_interdits": ["motinterdit"]},
   "config/cv": {"asset_id": "abc", "nom": "CV.pdf", "envoye_le": "2026-10-08T08:00:00Z"},
