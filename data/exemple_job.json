@@ -1,0 +1,14 @@
+{
+ "ville": "Grenoble",
+ "date": "2026-10-08",
+ "genere_le": "2026-10-08T10:00:00Z",
+ "bilan": "Exemple de démonstration : trois offres fictives pour vérifier l'affichage. Elles ne correspondent à aucune annonce réelle.",
+ "fourchette": "42 à 45 k€ brut par an, plancher à 40 k€",
+ "ecartees": "Deux stages, une alternance et un poste de lead demandant huit ans d'expérience.",
+ "offres": [
+  {"titre": "Développeur Fullstack Java", "employeur": "Éditeur Exemple", "type": "éditeur", "lieu": "Meylan", "salaire_texte": "42 à 48 k€ brut par an", "salaire_min": 42, "salaire_max": 48, "teletravail": "2 jours par semaine", "avantages": "Intéressement, participation", "experience": "3 ans", "publiee": "il y a 4 jours", "pourquoi": "Stack Java 21 et Spring identique à la tienne, chez un éditeur.", "lien": "https://example.com/offre-1", "deja_vu": false, "contact": {"nom": "Prénom Nom", "role": "chargée de recrutement", "lien": "https://www.linkedin.com/in/exemple/"}, "recherche_rh": "https://www.linkedin.com/search/results/people/?keywords=exemple%20recrutement", "cv": {"titre": "Développeur Fullstack Java", "profil": "Développeur full stack Java, 3 ans d'expérience sur un logiciel métier.", "asset_id": "0123456789abcdef0123456789abcdef", "fichier": "CV_Prenom_NOM_Editeur_Exemple.pdf", "ecart": "Kubernetes est demandé : tu ne l'as pas en production."}, "message": "Bonjour, votre offre Développeur Fullstack Java m'intéresse : 3 ans en Java et Angular. Ravi d'échanger."},
+  {"titre": "Ingénieur Logiciel Java", "employeur": "Industriel Exemple", "type": "client final", "lieu": "Grenoble", "salaire_texte": "40 à 44 k€ brut par an", "salaire_min": 40, "salaire_max": 44, "teletravail": "non indiqué", "avantages": "", "experience": "2 à 5 ans", "publiee": "il y a 9 jours", "pourquoi": "Client final, sécurité applicative au cœur du poste.", "lien": "https://example.com/offre-2", "deja_vu": true, "contact": null, "recherche_rh": "https://www.linkedin.com/search/results/people/?keywords=exemple%20recrutement", "cv": {"titre": "Ingénieur Logiciel Java", "profil": "Ingénieur logiciel Java, 3 ans d'expérience.", "asset_id": "", "fichier": "", "ecart": ""}, "message": "Bonjour, je postule à votre offre Ingénieur Logiciel Java. Ravi d'en parler."},
+  {"titre": "Développeur Java Angular", "employeur": "ESN Exemple", "type": "ESN", "lieu": "Échirolles", "salaire_texte": "", "salaire_min": null, "salaire_max": null, "teletravail": "3 jours par semaine", "avantages": "Tickets restaurant", "experience": "3 ans", "publiee": "il y a 2 jours", "pourquoi": "Bon télétravail, mais c'est une ESN.", "lien": "https://example.com/offre-3", "deja_vu": false, "contact": null, "recherche_rh": "", "cv": null, "message": ""}
+ ],
+ "sources": [{"t": "Exemple", "u": "https://example.com"}]
+}

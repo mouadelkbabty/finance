@@ -1,0 +1,938 @@
+<title>Floss & Job</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout : un bureau la nuit. Le fond est le plateau sombre ; ce qu'on y pose (le bordereau d'ordre,
+   les fiches d'offres) est du papier clair. Tout est aligné à gauche, une seule colonne large. */
+:root{
+  --desk:#0e1622; --desk-2:#131c29; --desk-3:#1b2738; --rule:#2a3a4f; --rule-soft:#1e2b3c;
+  --ink:#e8eef5; --ink-2:#b4c1d0; --ink-3:#8496aa;
+  --slip:#dfe9f0; --slip-2:#cddbe6; --slip-ink:#12202e; --slip-ink-2:#465a6d; --slip-rule:#9bb0c1;
+  --marker:#f4de5c; --marker-ink:#221e05; --stamp:#a8412f;
+  --up:#1f9fa8; --down:#e66767;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  --q1:#9cc4f5; --q2:#4f95ea; --q3:#2a66b8;
+  --display:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;
+  --text:"IBM Plex Sans",system-ui,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--desk);color:var(--ink);font:16px/1.55 var(--text);padding-inline:20px;padding-block:0 96px}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--marker);outline-offset:3px}
+.wrap{max-width:960px;margin-inline:auto}
+
+/* ---------- en-tête ---------- */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;padding-block:22px 18px;border-bottom:1px solid var(--rule-soft)}
+.brand{font:800 22px/1 var(--display);letter-spacing:-.02em;margin:0}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{background:none;border:0;padding:8px 14px;border-radius:999px;color:var(--ink-2);cursor:pointer;font-weight:500}
+.tab:hover{color:var(--ink);background:var(--desk-2)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--desk)}
+.top .etat{margin-left:auto;color:var(--ink-3);font-size:14px}
+
+/* ---------- question d'ouverture ---------- */
+.ask{padding-block:44px 8px;display:flex;flex-direction:column;gap:18px}
+.ask h1{font:800 clamp(34px,6.2vw,60px)/1.02 var(--display);letter-spacing:-.03em;margin:0;text-wrap:balance;max-width:16ch}
+.field{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.big{font:700 clamp(44px,9vw,84px)/1 var(--display);letter-spacing:-.03em;background:none;border:0;border-bottom:3px solid var(--rule);
+  color:var(--ink);padding:0 0 6px;min-width:0;border-radius:0}
+.big:focus{outline:none;border-bottom-color:var(--marker)}
+.big.amount{width:3.4ch;text-align:left;appearance:textfield;-moz-appearance:textfield}
+.big.amount::-webkit-outer-spin-button,.big.amount::-webkit-inner-spin-button{appearance:none;margin:0}
+.big.city{width:min(100%,9ch)}
+.unit{font:700 clamp(30px,6vw,56px)/1 var(--display);color:var(--ink-3)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:var(--desk-2);border:1px solid var(--rule);border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--ink-2);font-size:15px}
+.chip:hover{border-color:var(--ink-3);color:var(--ink)}
+.chip[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.actions{display:flex;gap:12px 18px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--marker);color:var(--marker-ink);border:0;border-radius:3px;padding:13px 20px;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(1.06)}
+.btn:disabled{opacity:.4;cursor:not-allowed;filter:none}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--rule);font-weight:500}
+.btn.ghost:hover{border-color:var(--ink-3);filter:none}
+.btn.paper{background:var(--slip-ink);color:var(--slip)}
+.btn.small{padding:8px 14px;font-size:15px}
+.hint{color:var(--ink-3);font-size:14px;margin:0;max-width:62ch}
+.fresh{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;color:var(--ink-2);font-size:15px;padding-top:6px}
+.fresh strong{color:var(--ink);font-weight:600}
+.cvrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:15px;color:var(--ink-2)}
+.cvrow strong{color:var(--ink);font-weight:600}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- bandeau de progression ---------- */
+.run{border:1px solid var(--rule);background:var(--desk-2);border-radius:4px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.run .line1{display:flex;gap:12px;align-items:center;font-weight:600}
+.pulse{width:10px;height:10px;border-radius:50%;background:var(--marker);flex:none;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}html{scroll-behavior:auto}}
+.run.bad{border-color:var(--down)}
+.run p{margin:0;color:var(--ink-2);font-size:15px}
+
+/* ---------- sections ---------- */
+section.bloc{padding-block:40px 0;display:flex;flex-direction:column;gap:18px;min-width:0}
+h2{font:700 28px/1.1 var(--display);letter-spacing:-.02em;margin:0;text-wrap:balance}
+h3{font:600 17px/1.3 var(--text);margin:0}
+.lede{color:var(--ink-2);margin:0;max-width:66ch}
+.note{color:var(--ink-3);font-size:14px;margin:0;max-width:70ch}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px 36px}
+.cols > *{min-width:0}
+ul.plain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+ul.plain li{padding-left:16px;position:relative;color:var(--ink-2);max-width:68ch}
+ul.plain li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;background:var(--ink-3);border-radius:1px}
+
+/* ---------- bordereau ---------- */
+.slip{background:var(--slip);color:var(--slip-ink);border-radius:2px;padding:30px 28px 24px;position:relative;margin-top:14px;
+  box-shadow:0 22px 44px -26px rgba(0,0,0,.85);display:flex;flex-direction:column;gap:16px;min-width:0}
+.slip::before{content:"";position:absolute;left:0;right:0;top:-6px;height:12px;
+  background:radial-gradient(circle at 7px 6px,var(--desk) 4.2px,transparent 4.8px) 0 0/14px 12px repeat-x}
+.slip .head{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;align-items:baseline;padding-right:150px}
+.slip .head h2{font-size:26px}
+.slip .head span{color:var(--slip-ink-2);font-size:14px}
+.tampon{position:absolute;right:22px;top:26px;border:2px solid var(--stamp);color:var(--stamp);padding:4px 10px;border-radius:3px;
+  font:700 13px/1.2 var(--display);transform:rotate(5deg);opacity:.8;text-align:center;max-width:130px}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:baseline;padding-block:12px;border-top:1px solid var(--slip-2)}
+.row:first-child{border-top:2px solid var(--slip-ink)}
+.row .qty{font:700 26px/1 var(--display);min-width:2.6ch;font-variant-numeric:tabular-nums}
+.row .what{min-width:0}
+.row .what b{font-weight:600;display:block}
+.row .what small{color:var(--slip-ink-2);font-size:13.5px;display:block;overflow-wrap:anywhere}
+.row .amt{font:600 18px/1 var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;vertical-align:.02em}
+.totals{display:flex;flex-direction:column;gap:6px;border-top:2px solid var(--slip-ink);padding-top:12px}
+.tl{display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums}
+.tl .dots{flex:1;border-bottom:1.5px dotted var(--slip-rule);transform:translateY(-4px);min-width:20px}
+.tl.sum{font-weight:600;font-size:18px}
+.tl.sum .v{background:linear-gradient(transparent 52%,var(--marker) 52%,var(--marker) 94%,transparent 94%);padding-inline:4px}
+.slip .foot{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;color:var(--slip-ink-2);font-size:14px}
+.slip .aside{border-top:1px solid var(--slip-2);padding-top:12px;display:flex;flex-direction:column;gap:8px;font-size:14.5px;color:var(--slip-ink-2)}
+.slip .aside b{color:var(--slip-ink);font-weight:600}
+
+/* ---------- répartition ---------- */
+.stack{display:flex;gap:2px;height:18px;border-radius:3px;overflow:hidden}
+.stack i{display:block;height:100%}
+
+/* ---------- barres ---------- */
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:2px;gap:2px;align-self:flex-start}
+.seg button{background:none;border:0;border-radius:999px;padding:5px 12px;color:var(--ink-2);cursor:pointer;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--desk-3);color:var(--ink)}
+.bars{display:flex;flex-direction:column;background:var(--desk-2);border-radius:4px;padding:10px 16px}
+.bar{display:grid;grid-template-columns:minmax(110px,30%) 1fr 76px;gap:12px;align-items:center;padding-block:7px;border-top:1px solid var(--rule-soft);outline-offset:-2px}
+.bar:first-child{border-top:0}
+.bar .lbl{min-width:0;overflow-wrap:anywhere;line-height:1.25}
+.bar .lbl small{display:block;color:var(--ink-3);font-size:13px}
+.bar .track{position:relative;height:12px}
+.bar .zero{position:absolute;top:-5px;bottom:-5px;width:1px;background:var(--rule)}
+.bar .fill{position:absolute;top:0;height:12px}
+.bar .fill.pos{background:var(--up);border-radius:0 4px 4px 0}
+.bar .fill.neg{background:var(--down);border-radius:4px 0 0 4px}
+.bar .val{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar .val.na{color:var(--ink-3)}
+.bar:hover,.bar:focus-visible{background:rgba(255,255,255,.03)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--ink-2);font-size:14px}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+
+/* ---------- repères, listes ---------- */
+dl.facts{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0 36px}
+dl.facts div{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;padding-block:9px;border-top:1px solid var(--rule-soft)}
+dl.facts dt{color:var(--ink-2);flex:1 1 auto}
+dl.facts dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums}
+dl.facts small{flex-basis:100%;color:var(--ink-3);font-size:13.5px}
+.news{display:flex;flex-direction:column}
+.news article{padding-block:14px;border-top:1px solid var(--rule-soft);display:flex;flex-direction:column;gap:4px;max-width:72ch}
+.news article p{margin:0;color:var(--ink-2)}
+.news article p.fx{color:var(--ink-3)}
+table.t{border-collapse:collapse;width:100%;font-size:15px}
+table.t th{text-align:left;font-weight:500;color:var(--ink-3);padding:8px 14px 8px 0;border-bottom:1px solid var(--rule);white-space:nowrap}
+table.t td{padding:10px 14px 10px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+table.t td.n,table.t th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.t td small{display:block;color:var(--ink-3);font-size:13px}
+table.t tr.pick td{background:rgba(244,222,92,.06)}
+.scroll{overflow-x:auto}
+.tag{display:inline-block;border:1px solid var(--rule);border-radius:999px;padding:1px 9px;font-size:13px;color:var(--ink-2);white-space:nowrap}
+.tag.pick{border-color:var(--marker);color:var(--marker)}
+
+/* ---------- actions : fourchettes d'objectifs ---------- */
+.ranges{background:var(--desk-2);border-radius:4px;padding:14px 16px 10px;display:flex;flex-direction:column}
+.rg{display:grid;grid-template-columns:minmax(110px,26%) 1fr 64px;gap:12px;align-items:center;padding-block:9px;border-top:1px solid var(--rule-soft)}
+.rg:first-of-type{border-top:0}
+.rg .track{position:relative;height:16px}
+.rg .span{position:absolute;top:6px;height:4px;background:var(--ink-3);border-radius:2px}
+.rg .dot{position:absolute;top:2px;width:12px;height:12px;border-radius:50%;background:var(--s1);box-shadow:0 0 0 2px var(--desk-2);transform:translateX(-6px)}
+.rg .zero{position:absolute;top:-9px;bottom:-9px;width:1px;background:var(--ink-2)}
+.rg .val{text-align:right;font-variant-numeric:tabular-nums}
+.axisnote{display:flex;justify-content:space-between;color:var(--ink-3);font-size:13px;padding:6px 76px 0 calc(min(26%,110px) + 12px)}
+.stock{border-top:1px solid var(--rule);padding-block:18px;display:flex;flex-direction:column;gap:10px}
+.stock .h{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.stock .h h3{font:700 20px/1.2 var(--display)}
+.stock p{margin:0;color:var(--ink-2);max-width:72ch}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 18px;margin:0;padding:0;list-style:none}
+.filters li{display:flex;gap:8px;align-items:flex-start;font-size:14.5px;color:var(--ink-2)}
+.mark{flex:none;width:18px;height:18px;border-radius:50%;display:inline-grid;place-items:center;font-size:12px;font-weight:700;margin-top:2px}
+.mark.y{background:var(--up);color:#04181a}
+.mark.n{background:none;border:1.5px solid var(--down);color:var(--down)}
+
+/* ---------- projection ---------- */
+.chart{background:var(--desk-2);border-radius:4px;padding:14px 12px 8px;position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+#tip{position:fixed;z-index:20;pointer-events:none;background:#04090f;border:1px solid var(--rule);border-radius:4px;padding:8px 10px;font-size:13.5px;
+  color:var(--ink);max-width:260px;line-height:1.4;box-shadow:0 10px 24px -10px #000}
+#tip b{font-weight:600}
+#tip .r{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+#tip .r i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+
+/* ---------- emploi ---------- */
+.offer{background:var(--slip);color:var(--slip-ink);border-radius:2px;padding:24px 26px;display:flex;flex-direction:column;gap:14px;min-width:0;
+  box-shadow:0 22px 44px -28px rgba(0,0,0,.85)}
+.offer .h{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
+.offer h3{font:700 22px/1.15 var(--display);letter-spacing:-.01em;text-wrap:balance}
+.offer .emp{color:var(--slip-ink-2)}
+.offer .tag{border-color:var(--slip-rule);color:var(--slip-ink-2)}
+.offer dl{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 28px}
+.offer dl div{padding-block:7px;border-top:1px solid var(--slip-2);display:flex;flex-direction:column}
+.offer dt{color:var(--slip-ink-2);font-size:13.5px}
+.offer dd{margin:0;font-weight:500}
+.offer p{margin:0;max-width:70ch}
+.offer .cv{background:var(--slip-2);border-radius:2px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.offer .cv p{font-size:15px}
+.offer .msg{border-left:3px solid var(--slip-ink);padding-left:12px;font-style:italic}
+.offer .acts{display:flex;flex-wrap:wrap;gap:10px}
+.offer .btn.ghost{color:var(--slip-ink);border-color:var(--slip-rule)}
+.offer .btn.ghost:hover{border-color:var(--slip-ink)}
+.offers{display:flex;flex-direction:column;gap:26px}
+.sal{background:var(--desk-2);border-radius:4px;padding:14px 16px 10px;position:relative}
+.sal .rw{display:grid;grid-template-columns:minmax(120px,32%) 1fr 96px;gap:12px;align-items:center;padding-block:8px;border-top:1px solid var(--rule-soft);position:relative}
+.sal .rw:first-of-type{border-top:0}
+.sal .track{position:relative;height:12px}
+.sal .band{position:absolute;top:-8px;bottom:-8px;background:rgba(244,222,92,.14)}
+.sal .rng{position:absolute;top:0;height:12px;background:var(--s1);border-radius:4px;min-width:6px}
+.sal .val{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sal .lbl{min-width:0;overflow-wrap:anywhere;line-height:1.25}
+.past{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- guide ---------- */
+ol.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:6px 14px;padding-block:18px;border-top:1px solid var(--rule-soft)}
+ol.steps li::before{content:counter(s);font:800 30px/1 var(--display);color:var(--ink-3)}
+ol.steps li > div{display:flex;flex-direction:column;gap:6px;min-width:0}
+ol.steps p{margin:0;color:var(--ink-2);max-width:66ch}
+.empty{border:1px dashed var(--rule);border-radius:4px;padding:26px 22px;color:var(--ink-2);display:flex;flex-direction:column;gap:8px;margin-top:20px}
+.empty b{color:var(--ink);font-weight:600}
+.closing{color:var(--ink-3);font-size:14px;border-top:1px solid var(--rule-soft);padding-top:18px;margin-top:44px;max-width:70ch}
+.srcs{display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+.srcs a{color:var(--ink-2);text-underline-offset:3px;overflow-wrap:anywhere}
+.srcs a:hover{color:var(--ink)}
+details.more{border-top:1px solid var(--rule-soft);padding-top:12px}
+details.more summary{cursor:pointer;color:var(--ink-2)}
+details.more[open] summary{margin-bottom:12px}
+
+@media (max-width:560px){
+  .slip{padding:26px 18px 20px}
+  .slip .head{padding-right:0}
+  .tampon{position:static;align-self:flex-start;transform:rotate(-2deg)}
+  .row{grid-template-columns:auto 1fr}
+  .row .amt{grid-column:2;justify-self:start}
+  .bar{grid-template-columns:minmax(92px,34%) 1fr 62px;gap:8px}
+  .rg{grid-template-columns:minmax(92px,30%) 1fr 54px;gap:8px}
+  .axisnote{padding-left:0;padding-right:0}
+  .sal .rw{grid-template-columns:1fr 84px}
+  .sal .rw .lbl{grid-column:1 / -1}
+  .offer{padding:20px 18px}
+  .top .etat{margin-left:0;flex-basis:100%}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="brand">Floss &amp; Job</p>
+    <nav class="tabs" role="tablist" aria-label="Rubriques">
+      <button class="tab" role="tab" id="tab-floss" data-view="floss" aria-selected="true">Bourse</button>
+      <button class="tab" role="tab" id="tab-job" data-view="job" aria-selected="false">Emploi</button>
+      <button class="tab" role="tab" id="tab-guide" data-view="guide" aria-selected="false">Guide BoursoBank</button>
+    </nav>
+    <span class="etat" id="etat">Connexion…</span>
+  </header>
+
+  <!-- ================= BOURSE ================= -->
+  <main id="view-floss">
+    <div class="ask">
+      <h1>Combien mets-tu ce mois-ci ?</h1>
+      <div class="field">
+        <label class="visually-hidden" for="montant">Montant à investir ce mois-ci, en euros</label>
+        <input class="big amount" id="montant" type="number" inputmode="numeric" min="10" max="100000" step="10" value="250">
+        <span class="unit">€</span>
+      </div>
+      <div class="chips" id="presets" aria-label="Montants courants"></div>
+      <div class="fresh" id="floss-fresh"></div>
+      <div id="floss-run"></div>
+    </div>
+    <div id="floss-out"></div>
+  </main>
+
+  <!-- ================= EMPLOI ================= -->
+  <main id="view-job" hidden>
+    <div class="ask">
+      <h1>Où cherches-tu ?</h1>
+      <div class="field">
+        <label class="visually-hidden" for="ville">Ville de la recherche</label>
+        <input class="big city" id="ville" type="text" value="Grenoble" autocomplete="off" spellcheck="false" maxlength="40">
+      </div>
+      <div class="chips" id="villes" aria-label="Villes habituelles"></div>
+      <div class="cvrow" id="cvrow"></div>
+      <input id="cvfile" type="file" accept="application/pdf" hidden>
+      <div class="actions">
+        <button class="btn" id="job-go" disabled>Chercher les offres</button>
+        <p class="hint" id="job-hint">Lance Claude pour 10 à 20 minutes. La recherche consomme ton quota : une par ville tous les trois jours suffit.</p>
+      </div>
+      <div id="job-run"></div>
+    </div>
+    <div id="job-out"></div>
+  </main>
+
+  <!-- ================= GUIDE ================= -->
+  <main id="view-guide" hidden>
+    <div class="ask">
+      <h1>Passer tes ordres chez BoursoBank</h1>
+      <p class="lede">Le site part du principe que tu investis dans un PEA BoursoBank au tarif Découverte. Voici comment l'ouvrir et passer l'ordre du mois.</p>
+    </div>
+    <section class="bloc" style="padding-top:8px">
+      <ol class="steps">
+        <li><div><h3>Ouvre le compte BoursoBank</h3>
+          <p>L'ouverture se fait en ligne, sur le site ou dans l'appli. Prépare une pièce d'identité, un justificatif de domicile de moins de trois mois et le RIB d'un compte à ton nom pour le premier virement.</p></div></li>
+        <li><div><h3>Ouvre le PEA depuis ton espace client</h3>
+          <p>Dans la rubrique Bourse, choisis « PEA ». Tu ne peux en avoir qu'un seul, toutes banques confondues. Ouvre-le tôt, même avec un petit versement : c'est la date d'ouverture qui lance le délai de cinq ans pour l'avantage fiscal.</p></div></li>
+        <li><div><h3>Garde le tarif Découverte</h3>
+          <p>Il ne coûte rien par mois et n'a pas de droits de garde. Les autres tarifs facturent des frais les mois sans ordre.</p></div></li>
+        <li><div><h3>Alimente le PEA</h3>
+          <p>Fais un virement de ton compte courant vers le compte espèces du PEA, du montant que tu as saisi ici. L'argent doit être arrivé avant de passer l'ordre.</p></div></li>
+        <li><div><h3>Passe l'ordre</h3>
+          <p>Cherche le titre avec son code ISIN, copié depuis le bordereau. Choisis « Acheter », saisis le nombre de parts indiqué, puis un ordre « à cours limité » avec un prix un peu au-dessus du dernier cours. Vérifie les frais affichés avant de valider.</p></div></li>
+        <li><div><h3>Vérifie le lendemain</h3>
+          <p>L'ordre apparaît dans ton portefeuille une fois exécuté. S'il ne l'est pas, c'est que le cours est passé au-dessus de ta limite : repasse-le avec le nouveau cours.</p></div></li>
+      </ol>
+    </section>
+    <section class="bloc">
+      <h2>Ce que coûte un ordre</h2>
+      <div class="scroll"><table class="t">
+        <thead><tr><th>Ordre</th><th class="n">Frais de courtage</th><th>Remarque</th></tr></thead>
+        <tbody>
+          <tr><td>ETF Amundi, achat d'au moins 100 €</td><td class="n">0 €</td><td>Offre Boursomarkets, depuis le 5 octobre 2026</td></tr>
+          <tr><td>Tout autre ordre jusqu'à 500 €</td><td class="n">1,99 €</td><td>ETF d'un autre émetteur, action, ou ETF Amundi sous 100 €</td></tr>
+          <tr><td>Tout autre ordre au-delà de 500 €</td><td class="n">0,60 %</td><td></td></tr>
+          <tr><td>Vente</td><td class="n">tarif normal</td><td>La gratuité ne vaut qu'à l'achat</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note">Tarifs relevés le 8 octobre 2026 dans deux comparatifs, pas sur la grille officielle. Ils changent souvent : les frais réels s'affichent dans l'appli avant de valider l'ordre, et c'est eux qui font foi.</p>
+      <p class="note">Un PEA n'achète que des parts entières. C'est pour ça que le bordereau donne un nombre de parts et laisse parfois quelques euros de côté.</p>
+      <div class="srcs">
+        <a href="https://sinvestir.fr/boursobank-modifie-boursomarkets/" target="_blank" rel="noopener">S'investir, changements de Boursomarkets au 5 octobre 2026</a>
+        <a href="https://pea.fr/courtier/pea-boursobank-2026-avis-frais-boursomarkets-et-alternatives/" target="_blank" rel="noopener">PEA.fr, grille des tarifs BoursoBank</a>
+        <a href="https://www.service-public.gouv.fr/particuliers/vosdroits/F22449" target="_blank" rel="noopener">Service-Public, fiscalité du PEA</a>
+      </div>
+    </section>
+  </main>
+
+  <p class="closing" id="closing">Ce site présente une lecture du marché, pas une certitude. Ce n'est pas un conseil financier personnalisé : la décision t'appartient.</p>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+"use strict";
+/* ================= réglages ================= */
+const SERVER = "Claude Code Remote";
+const COURTIER = { nom:"BoursoBank", fixe:1.99, seuil:500, taux:0.006, gratuitEmetteur:/amundi/i, gratuitMin:100 };
+const VILLES = ["Grenoble","Lyon","Annecy","Paris"];
+const PRESETS = [100,200,300,500,1000];
+const FILTRES = ["Analystes acheteurs, objectif à +15 % ou plus","Valorisation inférieure ou égale au secteur","Dette maîtrisée, pas de risque majeur","Événement dans les trois mois"];
+const MAX_ATTENTE_MIN = 45;
+
+/* ================= outils ================= */
+const $ = id => document.getElementById(id);
+function h(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  if(attrs) for(const [k,v] of Object.entries(attrs)){
+    if(v == null || v === false) continue;
+    if(k === "class") e.className = v;
+    else if(k === "text") e.textContent = v;
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if(k === "style") e.style.cssText = v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for(const k of kids.flat()){ if(k == null || k === false) continue; e.append(k.nodeType ? k : document.createTextNode(String(k))); }
+  return e;
+}
+const nf = (d=0) => new Intl.NumberFormat("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const eur = (x,d=2) => nf(d).format(x) + " €";
+const eur0 = x => nf(0).format(Math.round(x)) + " €";
+const num = (x,d=0) => nf(d).format(x);
+const isNum = x => typeof x === "number" && isFinite(x);
+function pct(x,d=1){ if(!isNum(x)) return "n.d."; const s = nf(d).format(Math.abs(x)); return (x>0?"+":x<0?"−":"") + s + " %"; }
+function dateFr(iso, opt){ const d = new Date(iso); if(isNaN(d)) return String(iso||""); return d.toLocaleDateString("fr-FR", opt||{day:"numeric",month:"long"}); }
+function today(){ const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function minutesDepuis(iso){ const t = Date.parse(iso); return isNaN(t) ? Infinity : (Date.now()-t)/60000; }
+function safeUrl(u){ try{ const x = new URL(u); return (x.protocol==="https:"||x.protocol==="http:") ? x.href : null; }catch(_){ return null; } }
+function lien(texte, url, cls){ const u = safeUrl(url); return u ? h("a",{href:u,target:"_blank",rel:"noopener",class:cls||""},texte) : h("span",{},texte); }
+function propre(s){ let t = String(s==null?"":s); for(const m of ((S.cfg||{}).mots_interdits||[])){ if(m) t = t.split(new RegExp(String(m).replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi")).join(""); } return t.trim(); }
+function store(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(_){ return null; } }
+
+/* info-bulle partagée */
+const tip = $("tip");
+function showTip(html, x, y){ tip.replaceChildren(...[].concat(html)); tip.hidden = false; const r = tip.getBoundingClientRect();
+  let left = x + 14, top = y + 14; if(left + r.width > innerWidth - 8) left = x - r.width - 14; if(top + r.height > innerHeight - 8) top = y - r.height - 14;
+  tip.style.left = Math.max(8,left)+"px"; tip.style.top = Math.max(8,top)+"px"; }
+function hideTip(){ tip.hidden = true; }
+document.addEventListener("pointermove", e => { const t = e.target.closest && e.target.closest("[data-tip]"); if(t) showTip(h("span",{text:t.dataset.tip}), e.clientX, e.clientY); else if(!e.target.closest || !e.target.closest(".chart")) hideTip(); });
+document.addEventListener("focusin", e => { const t = e.target.closest && e.target.closest("[data-tip]"); if(t){ const r = t.getBoundingClientRect(); showTip(h("span",{text:t.dataset.tip}), r.left+40, r.bottom-6); } });
+document.addEventListener("focusout", hideTip);
+addEventListener("scroll", hideTip, {passive:true});
+
+/* ================= état ================= */
+const S = { db:null, mcp:null, assets:null, dl:null, cfg:null, cv:null, floss:[], jobs:[], demandes:[], jobSel:null, periode:"ytd", secPeriode:"ytd", ready:false };
+
+/* ================= calcul de l'ordre ================= */
+function frais(montant, emetteur){
+  if(!(montant>0)) return 0;
+  if(COURTIER.gratuitEmetteur.test(emetteur||"") && montant >= COURTIER.gratuitMin) return 0;
+  return montant <= COURTIER.seuil ? COURTIER.fixe : Math.round(montant*COURTIER.taux*100)/100;
+}
+function calcOrdre(d, M){
+  const out = { lignes:[], ecartes:[], frais:0, investi:0, reste:M, ok:false };
+  const etf = Object.fromEntries((d.etf||[]).map(e=>[e.cle,e]));
+  const act = Object.fromEntries((d.actions||[]).map(a=>[a.cle,a]));
+  const ch = d.choix||{};
+  const socle = etf[ch.socle];
+  if(!socle || !(socle.cours>0) || !(M>0)) return out;
+  const partSocle = M<100 ? 1 : (M<300 ? 0.8 : 0.7);
+  let enveloppe = M*(1-partSocle);
+  const sat = [];
+  for(const cle of (ch.actions||[]).slice(0,2)){
+    const a = act[cle]; if(!a || !(a.cours>0)) continue;
+    if(M<100){ out.ecartes.push({nom:a.nom, raison:"Sous 100 €, tout va sur l'ETF Monde."}); continue; }
+    if(a.pea===false || (a.devise && a.devise!=="EUR")){ out.ecartes.push({nom:a.nom, raison:"Pas éligible au PEA."}); continue; }
+    const plafond = Math.min(0.10*M, enveloppe);
+    const n = Math.floor(plafond/a.cours + 1e-9);
+    if(n<1){ out.ecartes.push({nom:a.nom, raison:"Une action coûte "+eur(a.cours)+", plus que le plafond de 10 % du budget ("+eur(0.10*M)+")."}); continue; }
+    const m = n*a.cours, f = frais(m,"");
+    if(f/m > 0.02){ out.ecartes.push({nom:a.nom, raison:"L'ordre coûterait "+eur(f)+" de frais pour "+eur(m)+" investis, soit "+pct(f/m*100).replace("+","")+". Trop lourd."}); continue; }
+    sat.push({type:"action", cle, nom:a.nom, isin:a.isin, n, cours:a.cours, date:a.cours_date||"", montant:m, frais:f});
+    enveloppe -= m+f;
+  }
+  const c = etf[ch.complement];
+  if(c && c.cours>0){
+    if(M<100) out.ecartes.push({nom:c.nom, raison:"Sous 100 €, tout va sur l'ETF Monde."});
+    else{
+      const plafond = Math.min(0.20*M, enveloppe);
+      const n = Math.floor(plafond/c.cours + 1e-9);
+      if(n<1) out.ecartes.push({nom:c.nom, raison:"Une part coûte "+eur(c.cours)+", plus que la place disponible ("+eur(Math.max(0,plafond))+")."});
+      else{
+        const m = n*c.cours, f = frais(m,c.emetteur);
+        if(f/m > 0.02) out.ecartes.push({nom:c.nom, raison:"L'ordre coûterait "+eur(f)+" de frais pour "+eur(m)+" investis, soit "+pct(f/m*100).replace("+","")+". Il devient gratuit à partir de 100 € par ordre."});
+        else sat.push({type:"complement", cle:c.cle, nom:c.nom, isin:c.isin, n, cours:c.cours, date:c.cours_date||"", montant:m, frais:f});
+      }
+    }
+  }
+  const pris = sat.reduce((s,l)=>s+l.montant+l.frais,0);
+  const budget = M - pris;
+  let n = Math.floor(budget/socle.cours + 1e-9), m = n*socle.cours, f = n>0 ? frais(m,socle.emetteur) : 0;
+  while(n>0 && m+f > budget+1e-9){ n--; m = n*socle.cours; f = n>0 ? frais(m,socle.emetteur) : 0; }
+  if(n>0) out.lignes.push({type:"socle", cle:socle.cle, nom:socle.nom, isin:socle.isin, n, cours:socle.cours, date:socle.cours_date||"", montant:m, frais:f});
+  out.lignes.push(...sat.filter(l=>l.type==="complement"), ...sat.filter(l=>l.type==="action"));
+  out.investi = out.lignes.reduce((s,l)=>s+l.montant,0);
+  out.frais = out.lignes.reduce((s,l)=>s+l.frais,0);
+  out.reste = Math.max(0, M - out.investi - out.frais);
+  out.ok = out.lignes.length>0;
+  return out;
+}
+function seuils(d, M){
+  const actuel = new Set(calcOrdre(d,M).lignes.map(l=>l.cle));
+  const vus = new Map();
+  for(let b=50; b<=5000; b+=10){ for(const l of calcOrdre(d,b).lignes){ if(!vus.has(l.cle)) vus.set(l.cle,{budget:b,nom:l.nom}); } }
+  return [...vus].filter(([k,v]) => !actuel.has(k) && v.budget>M).map(([k,v])=>v).sort((a,b)=>a.budget-b.budget);
+}
+const COULEUR = { socle:"var(--s1)", complement:"var(--s3)", action:"var(--s2)" };
+const NOMTYPE = { socle:"Socle", complement:"Complément", action:"Action" };
+
+/* ================= rendu BOURSE ================= */
+function montant(){ const v = Math.round(Number($("montant").value)); return v>0 ? Math.min(v,100000) : 0; }
+function flossCourant(){ return S.floss[0] || null; }
+
+function renderFresh(){
+  const box = $("floss-fresh"); box.replaceChildren();
+  const d = flossCourant();
+  const act = demandeActive("floss");
+  if(!S.ready){ box.append("Chargement des données…"); return; }
+  if(!d){
+    box.append(h("span",{},"Aucune donnée de marché pour l'instant."));
+    box.append(h("button",{class:"btn",disabled:!!act||!peutLancer(),onclick:()=>lancer("floss")},"Lancer la première analyse"));
+    box.append(h("p",{class:"hint",text:"Claude collecte les cours et l'actualité. Compte 5 à 10 minutes."}));
+    return;
+  }
+  const aJour = d.date === today();
+  box.append(h("span",{}, "Données de marché : ", h("strong",{text:d.seance||dateFr(d.date)}), aJour ? ", collectées aujourd'hui." : ", collectées le "+dateFr(d.date)+"."));
+  const b = h("button",{class:"btn ghost small",disabled:!!act||!peutLancer()}, aJour ? "Recollecter quand même" : "Mettre à jour les données");
+  let arme = false;
+  b.addEventListener("click", () => {
+    if(aJour && !arme){ arme = true; b.textContent = "Confirmer : relancer Claude"; note.textContent = "Les données datent déjà d'aujourd'hui. Relancer consomme du quota pour peu de changement."; return; }
+    lancer("floss");
+  });
+  const note = h("p",{class:"hint",text: aJour ? "Changer le montant ne coûte rien : le calcul se fait ici." : "La mise à jour lance Claude pour 5 à 10 minutes et consomme ton quota. Une fois par jour suffit."});
+  box.append(b, note);
+}
+
+function barres(rows, key, opt){
+  opt = opt||{};
+  const vals = rows.map(r=>r[key]).filter(isNum);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), span = (hi-lo)||1;
+  const zero = (0-lo)/span*100;
+  return h("div",{class:"bars"}, rows.map(r => {
+    const v = r[key];
+    const fill = isNum(v) ? h("div",{class:"fill "+(v>=0?"pos":"neg"), style:(v>=0 ? "left:"+zero+"%;width:"+(v/span*100)+"%" : "left:"+(zero+v/span*100)+"%;width:"+(-v/span*100)+"%")}) : null;
+    return h("div",{class:"bar", tabindex:"0", "data-tip": r.nom + " : " + (isNum(v)?pct(v):"non disponible") + (r.tip ? ". " + r.tip : "")},
+      h("div",{class:"lbl"}, r.nom, r.sous ? h("small",{text:r.sous}) : null),
+      h("div",{class:"track"}, h("div",{class:"zero",style:"left:"+zero+"%"}), fill),
+      h("div",{class:"val"+(isNum(v)?"":" na")}, isNum(v) ? (r.approx?"≈ ":"")+pct(v) : "n.d."));
+  }));
+}
+function segment(options, courant, onPick){
+  return h("div",{class:"seg",role:"group"}, options.map(([k,l]) => h("button",{type:"button","aria-pressed":String(k===courant),onclick:()=>onPick(k)},l)));
+}
+
+function renderFloss(){
+  renderFresh();
+  const out = $("floss-out"); out.replaceChildren();
+  const d = flossCourant(); if(!d) { if(S.ready) out.append(h("div",{class:"empty"}, h("b",{text:"Ton bordereau apparaîtra ici."}), "Il indiquera quoi acheter, combien de parts et pour quel montant, à partir des cours du jour.")); return; }
+  const M = montant();
+  out.append(blocOrdre(d,M), blocMarche(d), blocActus(d), blocSecteurs(d), blocEtf(d), blocActions(d), blocProjection(M), blocNotes(d));
+  requestAnimationFrame(()=>dessinerProjection(M));
+}
+
+function blocOrdre(d, M){
+  const o = calcOrdre(d,M);
+  const sec = h("section",{class:"bloc",id:"ordre",style:"padding-top:26px"});
+  if(d.bilan) sec.append(h("p",{class:"lede",text:d.bilan}));
+  const slip = h("div",{class:"slip"});
+  slip.append(h("div",{class:"tampon",text:"Proposition, pas un ordre"}));
+  slip.append(h("div",{class:"head"}, h("h2",{text:"Ton bordereau pour "+eur0(M)}), h("span",{text:"PEA BoursoBank, cours du "+(o.lignes[0]?.date||d.seance||"")})));
+  if(!o.ok){
+    slip.append(h("p",{text:"Avec "+eur0(M)+", tu ne peux pas acheter une part entière. Augmente le montant ou attends le mois prochain."}));
+    sec.append(slip); return sec;
+  }
+  if(o.lignes.length>1){
+    slip.append(h("div",{class:"stack",role:"img","aria-label":"Répartition du budget entre les lignes"}, o.lignes.map(l=>h("i",{style:"flex:"+l.montant+";background:"+COULEUR[l.type],"data-tip":l.nom+" : "+eur(l.montant)+", "+num(l.montant/M*100)+" % du budget"})), o.reste>0.5?h("i",{style:"flex:"+o.reste+";background:var(--slip-rule)","data-tip":"Non investi : "+eur(o.reste)}):null));
+  }
+  slip.append(h("div",{class:"rows"}, o.lignes.map(l => h("div",{class:"row"},
+    h("div",{class:"qty",text:num(l.n)}),
+    h("div",{class:"what"}, h("b",{}, o.lignes.length>1?h("span",{class:"sw",style:"background:"+COULEUR[l.type]}):null, (l.n>1?"parts de ":"part de ")+l.nom),
+      h("small",{text: NOMTYPE[l.type]+", ISIN "+(l.isin||"n.d.")+", "+eur(l.cours, l.cours<20?4:2)+" la part"+(l.date?" au "+l.date:"")})),
+    h("div",{class:"amt",text:eur(l.montant)})))));
+  const tl = (lab,val,cls) => h("div",{class:"tl "+(cls||"")}, h("span",{text:lab}), h("span",{class:"dots"}), h("span",{class:"v",text:val}));
+  slip.append(h("div",{class:"totals"},
+    tl("Total à investir", eur(o.investi), "sum"),
+    tl("Frais de courtage", o.frais>0 ? eur(o.frais) : "0 €"),
+    tl("Reste sur ton PEA, à reporter", eur(o.reste)),
+    tl("Budget du mois", eur0(M))));
+  const aside = h("div",{class:"aside"});
+  for(const e of o.ecartes) aside.append(h("div",{}, h("b",{text:e.nom+" : pas ce mois-ci. "}), e.raison));
+  const s = seuils(d,M);
+  if(s.length) aside.append(h("div",{}, h("b",{text:"Ce que débloque un budget plus élevé : "}), s.map(x=>x.nom+" à partir de "+eur0(x.budget)+" par mois").join(" ; ")+"."));
+  aside.append(h("div",{}, h("b",{text:"Si ça tourne mal : "}), "à −30 %, ces "+eur(o.investi)+" vaudraient "+eur(o.investi*0.7)+", soit "+eur(o.investi*0.3)+" de moins."));
+  slip.append(aside);
+  slip.append(h("div",{class:"foot"}, h("span",{text:"Parts entières uniquement, frais selon le tarif Découverte."}), h("button",{class:"btn paper small",onclick:()=>voir("guide")},"Comment passer l'ordre")));
+  sec.append(slip);
+
+  const pourquoi = h("div",{}, h("h3",{text:"Pourquoi ces choix"}));
+  const ul = h("ul",{class:"plain",style:"margin-top:10px"});
+  const noms = Object.fromEntries([...(d.etf||[]),...(d.actions||[])].map(x=>[x.cle,x.nom]));
+  const r = (d.choix||{}).raisons||{};
+  for(const cle of [d.choix?.socle, d.choix?.complement, ...(d.choix?.actions||[])]) if(cle && r[cle]) ul.append(h("li",{}, h("b",{style:"color:var(--ink)",text:(noms[cle]||cle)+". "}), r[cle]));
+  pourquoi.append(ul);
+  const avis = h("div",{}, h("h3",{text:"Ce qui ferait changer d'avis"}), h("ul",{class:"plain",style:"margin-top:10px"}, (d.changer_avis||[]).map(t=>h("li",{text:t}))));
+  sec.append(h("div",{class:"cols",style:"margin-top:14px"}, pourquoi, avis));
+  const prev = S.floss[1];
+  if(prev && prev.choix){
+    const sig = c => [c.socle,c.complement||"",...(c.actions||[])].join("|");
+    sec.append(h("p",{class:"note",text: sig(prev.choix)===sig(d.choix||{}) ? "Même sélection que le "+dateFr(prev.date)+"." : "La sélection a changé depuis le "+dateFr(prev.date)+" : relis les raisons ci-dessus."}));
+  }
+  return sec;
+}
+
+function blocMarche(d){
+  const sec = h("section",{class:"bloc",id:"marche"}, h("h2",{text:"Le marché"}));
+  const lab = {jour:"Sur la séance", mois:"Sur un mois", ytd:"Depuis janvier"};
+  const zone = h("div",{style:"display:flex;flex-direction:column;gap:12px"});
+  const draw = () => { zone.replaceChildren(
+    segment(Object.entries(lab), S.periode, k=>{ S.periode=k; draw(); }),
+    barres((d.indices||[]).map(i=>({nom:i.nom, sous:isNum(i.niveau)?num(i.niveau, i.niveau<1000?2:0)+" points":null, jour:i.jour, mois:i.mois, ytd:i.ytd, approx:i.approx, tip:i.approx?"Valeur approchée":""})), S.periode),
+    h("div",{class:"legend"}, h("span",{}, h("i",{style:"background:var(--up)"}),"Hausse"), h("span",{}, h("i",{style:"background:var(--down)"}),"Baisse"), h("span",{text:"≈ valeur approchée"}))); };
+  draw(); sec.append(zone);
+  if((d.reperes||[]).length) sec.append(h("dl",{class:"facts"}, d.reperes.map(r=>h("div",{}, h("dt",{text:r.nom}), h("dd",{text:r.valeur}), r.note?h("small",{text:r.note}):null))));
+  return sec;
+}
+
+function blocActus(d){
+  const sec = h("section",{class:"bloc",id:"actus"}, h("h2",{text:"Ce qui fait bouger les cours"}));
+  sec.append(h("div",{class:"news"}, (d.actus||[]).map(a=>h("article",{}, h("h3",{text:a.titre}), h("p",{text:a.fait}), a.effet?h("p",{class:"fx",text:"Pour toi : "+a.effet}):null))));
+  const cols = h("div",{class:"cols"});
+  if((d.agenda||[]).length) cols.append(h("div",{}, h("h3",{text:"Les prochains jours"}), h("dl",{class:"facts",style:"grid-template-columns:1fr;margin-top:8px"}, d.agenda.map(a=>h("div",{}, h("dt",{text:a.quoi}), h("dd",{style:"font-weight:500;color:var(--ink-2)",text:a.quand}))))));
+  if((d.previsions||[]).length) cols.append(h("div",{}, h("h3",{text:"Ce que d'autres prévoient"}), h("dl",{class:"facts",style:"grid-template-columns:1fr;margin-top:8px"}, d.previsions.map(p=>h("div",{}, h("dt",{text:p.sujet}), h("dd",{text:p.valeur}), h("small",{text:[p.source,p.date].filter(Boolean).join(", ")})))), h("p",{class:"note",style:"margin-top:8px",text:"Ce sont des opinions. Elles se trompent souvent."})));
+  if(cols.children.length) sec.append(cols);
+  return sec;
+}
+
+function blocSecteurs(d){
+  const sec = h("section",{class:"bloc",id:"secteurs"}, h("h2",{text:"Les secteurs"}));
+  if(!(d.secteurs||[]).length) return sec;
+  const lab = {ytd:"Depuis janvier", mois:"Sur un mois"};
+  const zone = h("div",{style:"display:flex;flex-direction:column;gap:12px"});
+  const draw = () => {
+    const rows = d.secteurs.map(s=>({nom:s.nom, sous:s.zone, ytd:s.ytd, mois:s.mois, tip:s.raison})).sort((a,b)=>(isNum(b[S.secPeriode])?b[S.secPeriode]:-1e9)-(isNum(a[S.secPeriode])?a[S.secPeriode]:-1e9));
+    zone.replaceChildren(segment(Object.entries(lab), S.secPeriode, k=>{ S.secPeriode=k; draw(); }), barres(rows, S.secPeriode));
+  };
+  draw(); sec.append(zone);
+  const raisons = d.secteurs.filter(s=>s.raison);
+  if(raisons.length) sec.append(h("details",{class:"more"}, h("summary",{text:"Pourquoi ces écarts"}), h("ul",{class:"plain"}, raisons.map(s=>h("li",{}, h("b",{style:"color:var(--ink)",text:s.nom+" : "}), s.raison)))));
+  return sec;
+}
+
+function blocEtf(d){
+  const sec = h("section",{class:"bloc",id:"etf"}, h("h2",{text:"Les ETF du PEA"}),
+    h("p",{class:"lede",text:"Un ETF est un fonds coté qui copie un indice. Tous ceux-ci réinvestissent les dividendes."}));
+  const choisis = new Set([d.choix?.socle, d.choix?.complement].filter(Boolean));
+  const rows = (d.etf||[]).map(e=>{
+    const f100 = frais(100, e.emetteur);
+    return h("tr",{class:choisis.has(e.cle)?"pick":""},
+      h("td",{}, e.nom, " ", choisis.has(e.cle)?h("span",{class:"tag pick",text:e.cle===d.choix.socle?"socle":"complément"}):null, h("small",{text:"ISIN "+(e.isin||"n.d.")})),
+      h("td",{text:e.expo||""}),
+      h("td",{class:"n",text:isNum(e.frais)?num(e.frais,2)+" %":"n.d."}),
+      h("td",{class:"n",text:f100===0?"0 €":eur(f100)}),
+      h("td",{class:"n",text:isNum(e.encours)?num(e.encours)+" M€":"n.d."}),
+      h("td",{class:"n",text:pct(e.perf1a)}),
+      h("td",{class:"n",text:isNum(e.perf5a)?pct(e.perf5a):"trop récent"}),
+      h("td",{class:"n"}, isNum(e.cours)?eur(e.cours, e.cours<20?4:2):"n.d.", e.cours_date?h("small",{text:e.cours_date}):null));
+  });
+  sec.append(h("div",{class:"scroll"}, h("table",{class:"t"}, h("thead",{}, h("tr",{}, ["ETF","Zone"].map(t=>h("th",{text:t})), ["Frais par an","Courtage pour 100 €","Encours","Sur 1 an","Sur 5 ans","Dernier cours"].map(t=>h("th",{class:"n",text:t})))), h("tbody",{},rows))));
+  sec.append(h("p",{class:"note",text:"Courtage calculé au tarif Découverte de BoursoBank : 0 € pour un ETF Amundi acheté par 100 € ou plus, 1,99 € sinon. Dans un PEA, après cinq ans, les gains ne supportent que 18,6 % de prélèvements sociaux, contre 31,4 % sur un compte-titres."}));
+  return sec;
+}
+
+function blocActions(d){
+  const sec = h("section",{class:"bloc",id:"actions"}, h("h2",{text:"Les actions à surveiller"}),
+    h("p",{class:"lede",text:"Une action seule est toujours plus risquée qu'un ETF. Le graphique montre où les analystes voient chaque titre dans un an, par rapport au cours actuel."}));
+  const A = (d.actions||[]).filter(a=>isNum(a.cours)&&isNum(a.objectif));
+  if(A.length){
+    const p = (a,k) => isNum(a[k]) ? (a[k]/a.cours-1)*100 : null;
+    const all = A.flatMap(a=>[p(a,"objectif_bas"),p(a,"objectif"),p(a,"objectif_haut")]).filter(isNum);
+    const lo = Math.min(-5, ...all), hi = Math.max(10, ...all), span = hi-lo, X = v => (v-lo)/span*100;
+    const box = h("div",{class:"ranges"});
+    for(const a of A){
+      const b = p(a,"objectif_bas"), m = p(a,"objectif"), t = p(a,"objectif_haut");
+      box.append(h("div",{class:"rg",tabindex:"0","data-tip":a.nom+" : objectif moyen "+pct(m)+(isNum(b)&&isNum(t)?", du plus prudent ("+pct(b)+") au plus optimiste ("+pct(t)+")":"")+". "+(a.analystes||"?")+" analystes."},
+        h("div",{class:"lbl",text:a.nom}),
+        h("div",{class:"track"}, h("div",{class:"zero",style:"left:"+X(0)+"%"}), isNum(b)&&isNum(t)?h("div",{class:"span",style:"left:"+X(b)+"%;width:"+(X(t)-X(b))+"%"}):null, h("div",{class:"dot",style:"left:"+X(m)+"%"})),
+        h("div",{class:"val",text:pct(m,0)})));
+    }
+    box.append(h("div",{class:"legend",style:"padding-top:8px"}, h("span",{}, h("i",{style:"background:var(--ink-2);width:2px;height:12px;border-radius:0"}),"Cours actuel"), h("span",{}, h("i",{style:"background:var(--s1);border-radius:50%"}),"Objectif moyen"), h("span",{}, h("i",{style:"background:var(--ink-3);height:4px;width:18px"}),"Du plus prudent au plus optimiste")));
+    sec.append(box);
+  }
+  const retenues = new Set(d.choix?.actions||[]);
+  for(const a of (d.actions||[])){
+    const f = a.filtres||[], score = f.filter(Boolean).length;
+    sec.append(h("div",{class:"stock"},
+      h("div",{class:"h"}, h("h3",{text:a.nom}), h("span",{class:"tag",text:a.secteur||""}), a.pea===false?h("span",{class:"tag",text:"hors PEA"}):null, retenues.has(a.cle)?h("span",{class:"tag pick",text:"retenue"}):null,
+        h("span",{style:"margin-left:auto;color:var(--ink-2);font-variant-numeric:tabular-nums",text:isNum(a.cours)?nf(2).format(a.cours)+(a.devise==="USD"?" $":" €"):""})),
+      h("p",{text:[a.activite,a.fait].filter(Boolean).join(" ")}),
+      h("dl",{class:"facts"},
+        h("div",{}, h("dt",{text:"Prix sur bénéfices (PER)"}), h("dd",{text:isNum(a.per)?num(a.per,1):"n.d."}), h("small",{text:isNum(a.per_pairs)?"contre "+num(a.per_pairs,1)+" pour ses pairs":"pas de comparaison disponible"})),
+        h("div",{}, h("dt",{text:"Avis des analystes"}), h("dd",{text:a.avis||"n.d."}), h("small",{text:(a.analystes||"?")+" analystes, objectif moyen "+(isNum(a.objectif)?nf(2).format(a.objectif):"n.d.")})),
+        h("div",{}, h("dt",{text:"Prochains résultats"}), h("dd",{text:a.resultats||"n.d."}))),
+      h("div",{class:"cols",style:"gap:8px 36px"}, h("p",{}, h("b",{style:"color:var(--ink)",text:"Pour. "}), a.pour||""), h("p",{}, h("b",{style:"color:var(--ink)",text:"Contre. "}), a.contre||"")),
+      f.length ? h("div",{}, h("p",{class:"note",style:"margin-bottom:8px",text:"Filtres passés : "+score+" sur "+f.length+(a.pea===false?". Hors PEA, elle reste hors du bordereau.":score>=3?". Elle peut entrer dans le bordereau si le budget le permet.":". Elle reste hors du bordereau.")}),
+        h("ul",{class:"filters"}, f.map((ok,i)=>h("li",{}, h("span",{class:"mark "+(ok?"y":"n"),"aria-label":ok?"oui":"non",text:ok?"✓":"×"}), h("span",{}, FILTRES[i]||"", (a.notes||[])[i]?h("small",{style:"display:block;color:var(--ink-3)",text:a.notes[i]}):null))))) : null));
+  }
+  return sec;
+}
+
+/* projection : calcul */
+function projeter(M, taux, annees){ const rm = Math.pow(1+taux,1/12)-1; const pts=[0]; let v=0; for(let m=1;m<=annees*12;m++){ v = v*(1+rm)+M; if(m%12===0) pts.push(v); } return pts; }
+const SCEN = [[0.08,"8 % par an","var(--q1)"],[0.06,"6 % par an","var(--q2)"],[0.04,"4 % par an","var(--q3)"]];
+function blocProjection(M){
+  const sec = h("section",{class:"bloc",id:"projection"}, h("h2",{text:"Si tu continues "+eur0(M)+" par mois"}),
+    h("p",{class:"lede",text:"Trois hypothèses de rendement, pas des prévisions. Les performances passées ne garantissent rien."}));
+  sec.append(h("div",{class:"legend"}, SCEN.map(s=>h("span",{}, h("i",{style:"background:"+s[2]}), s[1])), h("span",{}, h("i",{style:"background:var(--ink-3)"}),"Ce que tu as versé")));
+  sec.append(h("div",{class:"chart",id:"proj-chart"}));
+  const rows = [10,20].map(a=>{ const verse = M*12*a; return h("tr",{}, h("td",{text:"Après "+a+" ans"}), h("td",{class:"n",text:eur0(verse)}), SCEN.slice().reverse().map(s=>h("td",{class:"n",text:eur0(projeter(M,s[0],a)[a])}))); });
+  sec.append(h("div",{class:"scroll"}, h("table",{class:"t"}, h("thead",{}, h("tr",{}, h("th",{text:""}), h("th",{class:"n",text:"Versé"}), h("th",{class:"n",text:"À 4 %"}), h("th",{class:"n",text:"À 6 %"}), h("th",{class:"n",text:"À 8 %"}))), h("tbody",{},rows))));
+  const v = projeter(M,0.06,20)[20], gain = v - M*240;
+  sec.append(h("p",{class:"note",text:"À 6 % sur 20 ans, il te resterait "+eur0(v-gain*0.186)+" après impôt dans un PEA, contre "+eur0(v-gain*0.314)+" sur un compte-titres : "+eur0(gain*(0.314-0.186))+" d'écart."}));
+  return sec;
+}
+function dessinerProjection(M){
+  const box = $("proj-chart"); if(!box) return;
+  const W = Math.max(280, box.clientWidth-24), H = Math.round(Math.min(320, Math.max(220, W*0.42)));
+  const mg = {l:8, r:92, t:10, b:26};
+  const series = SCEN.map(s=>({taux:s[0], nom:s[1], col:s[2], pts:projeter(M,s[0],20)}));
+  const verse = Array.from({length:21},(_,i)=>M*12*i);
+  const max = series[0].pts[20];
+  const pas = [1e3,2e3,5e3,1e4,2e4,5e4,1e5,2e5,5e5,1e6,2e6,5e6].find(p=>max/p<=5)||1e7;
+  const top = Math.ceil(max/pas)*pas;
+  const x = i => mg.l + (W-mg.l-mg.r)*i/20, y = v => mg.t + (H-mg.t-mg.b)*(1-v/top);
+  const ns = "http://www.w3.org/2000/svg";
+  const s = (tag,attrs,txt) => { const e = document.createElementNS(ns,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(txt!=null) e.textContent = txt; return e; };
+  const svg = s("svg",{viewBox:"0 0 "+W+" "+H, width:W, height:H, role:"img","aria-label":"Valeur du portefeuille sur 20 ans selon trois hypothèses de rendement"});
+  for(let v=0; v<=top+1; v+=pas){ svg.append(s("line",{x1:mg.l,x2:W-mg.r,y1:y(v),y2:y(v),stroke:"var(--rule-soft)","stroke-width":1})); svg.append(s("text",{x:mg.l+2,y:y(v)-4,fill:"var(--ink-3)","font-size":12}, v===0?"":num(v/1000)+" k€")); }
+  for(const a of [0,5,10,15,20]) svg.append(s("text",{x:x(a),y:H-6,fill:"var(--ink-3)","font-size":12,"text-anchor":a===0?"start":a===20?"end":"middle"}, a===0?"aujourd'hui":a+" ans"));
+  const path = pts => pts.map((v,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(v).toFixed(1)).join(" ");
+  svg.append(s("path",{d:path(verse),fill:"none",stroke:"var(--ink-3)","stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+  let dernier = -99;
+  for(const se of series.slice().reverse()){
+    svg.append(s("path",{d:path(se.pts),fill:"none",stroke:se.col,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+  }
+  for(const se of series){ let ly = y(se.pts[20])+4; if(ly-dernier<15) ly = dernier+15; dernier = ly;
+    svg.append(s("circle",{cx:x(20),cy:y(se.pts[20]),r:4,fill:se.col,stroke:"var(--desk-2)","stroke-width":2}));
+    svg.append(s("text",{x:x(20)+10,y:ly,fill:"var(--ink)","font-size":13},num(Math.round(se.pts[20]/1000))+" k€")); }
+  let lv = y(verse[20])+4; if(lv-dernier<15) lv = dernier+15;
+  svg.append(s("text",{x:x(20)+10,y:lv,fill:"var(--ink-3)","font-size":13},num(Math.round(verse[20]/1000))+" k€"));
+  const cross = s("line",{y1:mg.t,y2:H-mg.b,stroke:"var(--ink-3)","stroke-width":1,visibility:"hidden"});
+  svg.append(cross);
+  const hit = s("rect",{x:mg.l,y:mg.t,width:W-mg.l-mg.r,height:H-mg.t-mg.b,fill:"transparent"});
+  svg.append(hit);
+  const info = i => [h("b",{text:i===0?"Aujourd'hui":"Après "+i+" an"+(i>1?"s":"")}), ...series.map(se=>h("div",{class:"r"}, h("span",{}, h("i",{style:"background:"+se.col}), se.nom), h("span",{text:eur0(se.pts[i])}))), h("div",{class:"r"}, h("span",{}, h("i",{style:"background:var(--ink-3)"}),"Versé"), h("span",{text:eur0(verse[i])}))];
+  hit.addEventListener("pointermove", e => { const r = svg.getBoundingClientRect(); const px = (e.clientX-r.left)*W/r.width; const i = Math.max(0,Math.min(20,Math.round((px-mg.l)/((W-mg.l-mg.r)/20))));
+    cross.setAttribute("x1",x(i)); cross.setAttribute("x2",x(i)); cross.setAttribute("visibility","visible"); showTip(info(i), e.clientX, e.clientY); });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("visibility","hidden"); hideTip(); });
+  box.replaceChildren(svg);
+}
+let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(()=>dessinerProjection(montant()), 150); });
+
+function blocNotes(d){
+  const sec = h("section",{class:"bloc",id:"notes"}, h("h2",{text:"À garder en tête"}));
+  const cols = h("div",{class:"cols"});
+  if((d.vigilance||[]).length) cols.append(h("div",{}, h("h3",{text:"Points de vigilance"}), h("ul",{class:"plain",style:"margin-top:10px"}, d.vigilance.map(t=>h("li",{text:t})))));
+  if((d.inconnues||[]).length) cols.append(h("div",{}, h("h3",{text:"Ce que cette analyse ne sait pas"}), h("ul",{class:"plain",style:"margin-top:10px"}, d.inconnues.map(t=>h("li",{text:t})))));
+  sec.append(cols);
+  if((d.sources||[]).length) sec.append(h("details",{class:"more"}, h("summary",{text:"Sources ("+d.sources.length+")"}), h("div",{class:"srcs"}, d.sources.map(s=>lien(s.t||s.u, s.u)))));
+  return sec;
+}
+
+/* ================= rendu EMPLOI ================= */
+function ville(){ return $("ville").value.trim().replace(/\s+/g," "); }
+function cleVille(v){ return v.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""); }
+function jobPour(v){ const k = cleVille(v); return S.jobs.find(j=>cleVille(j.ville||"")===k) || null; }
+
+function renderCv(){
+  const row = $("cvrow"); row.replaceChildren();
+  if(!S.ready){ row.append("Chargement…"); return; }
+  if(S.cv && S.cv.asset_id){
+    row.append(h("span",{}, "CV utilisé : ", h("strong",{text:S.cv.nom||"CV.pdf"}), S.cv.envoye_le ? ", envoyé le "+dateFr(S.cv.envoye_le) : ""));
+    row.append(h("button",{class:"btn ghost small",disabled:!S.assets,onclick:()=>$("cvfile").click()},"Changer de CV"));
+  }else{
+    row.append(h("span",{text:"Aucun CV pour l'instant. Dépose-le en PDF : chaque offre recevra sa version adaptée."}));
+    row.append(h("button",{class:"btn ghost small",disabled:!S.assets,onclick:()=>$("cvfile").click()},"Déposer mon CV"));
+  }
+  if(!S.assets) row.append(h("span",{class:"hint",text:"L'envoi de fichier n'est pas disponible dans cette vue."}));
+}
+$("cvfile").addEventListener("change", async e => {
+  const f = e.target.files && e.target.files[0]; e.target.value = ""; if(!f) return;
+  const row = $("cvrow"); row.replaceChildren("Envoi de "+f.name+"…");
+  try{
+    const up = await S.assets.upload(f,{type:"application/pdf"});
+    await S.db.doc("config/cv").set({asset_id:up.id, nom:f.name, taille:up.sizeBytes, envoye_le:new Date().toISOString()});
+  }catch(err){ renderCv(); $("cvrow").append(h("span",{style:"color:var(--down)",text:"L'envoi a échoué ("+(err.code||"erreur")+"). Vérifie que c'est un PDF de moins de 20 Mo et réessaie."})); }
+});
+
+function renderJob(){
+  renderCv();
+  const v = ville(), act = demandeActive("job"), j = S.jobSel ? S.jobs.find(x=>x.id===S.jobSel) : jobPour(v);
+  const go = $("job-go"), hint = $("job-hint");
+  const existe = jobPour(v);
+  const recent = existe && minutesDepuis(existe.genere_le||existe.date) < 3*24*60;
+  go.textContent = !v ? "Chercher les offres" : (existe ? "Relancer la recherche à "+v : "Chercher les offres à "+v);
+  go.disabled = !v || !!act || !peutLancer() || !(S.cv && S.cv.asset_id);
+  hint.textContent = !(S.cv && S.cv.asset_id) && S.ready ? "Dépose ton CV pour lancer une recherche."
+    : recent ? "Tu as déjà une recherche à "+existe.ville+" du "+dateFr(existe.genere_le||existe.date)+". Elle est affichée plus bas ; la relancer consomme du quota."
+    : "Lance Claude pour 10 à 20 minutes. La recherche consomme ton quota : une par ville tous les trois jours suffit.";
+  const out = $("job-out"); out.replaceChildren();
+  if(!S.ready) return;
+  if(S.jobs.length>1) out.append(h("section",{class:"bloc",style:"padding-top:24px"}, h("h3",{text:"Tes recherches"}), h("div",{class:"past"}, S.jobs.map(x=>h("button",{class:"chip","aria-pressed":String(j&&x.id===j.id),onclick:()=>{ S.jobSel=x.id; renderJob(); }}, (x.ville||"?")+", "+dateFr(x.genere_le||x.date,{day:"numeric",month:"short"}))))));
+  if(!j){ out.append(h("div",{class:"empty"}, h("b",{text:"Les offres apparaîtront ici."}), "Pour chaque offre : le lien pour postuler, un contact au recrutement, un message LinkedIn et ton CV adapté à télécharger.")); return; }
+  out.append(blocBilanJob(j), blocSalaires(j), blocOffres(j), blocFinJob(j));
+}
+function blocBilanJob(j){
+  return h("section",{class:"bloc",style:"padding-top:26px"}, h("h2",{text:(j.offres||[]).length+" offres retenues à "+(j.ville||"")}),
+    h("p",{class:"lede",text:propre(j.bilan)}), h("p",{class:"note",text:"Recherche du "+dateFr(j.genere_le||j.date,{day:"numeric",month:"long",year:"numeric"})+"."}));
+}
+function blocSalaires(j){
+  const O = (j.offres||[]);
+  const cible = ((S.cfg||{}).cibles||{})[cleVille(j.ville||"")] || (S.cfg||{}).cible_defaut || null;
+  const avec = O.filter(o=>isNum(o.salaire_min)||isNum(o.salaire_max));
+  const sec = h("section",{class:"bloc"}, h("h2",{text:"Les salaires affichés face à ta cible"}));
+  if(!avec.length){ sec.append(h("p",{class:"lede",text:"Aucune de ces offres n'affiche de salaire."+(cible?" Ta fourchette à annoncer : "+cible[0]+" à "+cible[1]+" k€ brut par an.":"")})); return sec; }
+  const vals = avec.flatMap(o=>[o.salaire_min,o.salaire_max]).filter(isNum).concat(cible||[]);
+  const lo = Math.floor((Math.min(...vals)-2)/5)*5, hi = Math.ceil((Math.max(...vals)+2)/5)*5, X = v => (v-lo)/(hi-lo)*100;
+  const box = h("div",{class:"sal"});
+  for(const o of O){
+    const a = isNum(o.salaire_min)?o.salaire_min:o.salaire_max, b = isNum(o.salaire_max)?o.salaire_max:o.salaire_min;
+    box.append(h("div",{class:"rw",tabindex:"0","data-tip":propre(o.employeur)+" : "+(isNum(a)?(a===b?a+" k€":a+" à "+b+" k€")+" brut par an":"salaire non indiqué")},
+      h("div",{class:"lbl",text:propre(o.employeur)}),
+      h("div",{class:"track"}, cible?h("div",{class:"band",style:"left:"+X(cible[0])+"%;width:"+(X(cible[1])-X(cible[0]))+"%"}):null, isNum(a)?h("div",{class:"rng",style:"left:"+X(a)+"%;width:"+Math.max(0,X(b)-X(a))+"%"}):null),
+      h("div",{class:"val"+(isNum(a)?"":" na"),style:isNum(a)?"":"color:var(--ink-3)",text:isNum(a)?(a===b?a+" k€":a+"–"+b+" k€"):"non indiqué"})));
+  }
+  box.append(h("div",{class:"legend",style:"padding-top:8px"}, h("span",{}, h("i",{style:"background:var(--s1)"}),"Salaire affiché, en k€ brut par an"), cible?h("span",{}, h("i",{style:"background:rgba(244,222,92,.4)"}),"Ta cible : "+cible[0]+" à "+cible[1]+" k€"):null, h("span",{text:"Échelle de "+lo+" à "+hi+" k€"})));
+  sec.append(box);
+  return sec;
+}
+async function telecharger(assetId, nom, btn){
+  const avant = btn.textContent; btn.disabled = true;
+  try{
+    if(!S.dl) throw {code:"indisponible"};
+    const res = await fetch("/_blob/"+assetId); if(!res.ok) throw {code:"introuvable"};
+    await S.dl.save({filename:nom, data:await res.blob()});
+    btn.textContent = "Téléchargé";
+  }catch(e){ btn.textContent = e.code==="declined" ? avant : e.code==="introuvable" ? "Fichier introuvable" : e.code==="indisponible" ? "Téléchargement indisponible ici" : "Échec, réessaie"; }
+  finally{ btn.disabled = false; setTimeout(()=>{ btn.textContent = avant; }, 2600); }
+}
+async function copier(texte, btn){
+  const avant = btn.textContent;
+  try{ await navigator.clipboard.writeText(texte); btn.textContent = "Copié"; }
+  catch(_){ const r = document.createRange(); r.selectNodeContents(btn.parentElement.previousElementSibling||btn); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Sélectionné, copie avec Ctrl+C"; }
+  setTimeout(()=>{ btn.textContent = avant; }, 2200);
+}
+function blocOffres(j){
+  const sec = h("section",{class:"bloc"}, h("h2",{text:"Les offres, de la meilleure à la moins bonne"}));
+  const wrap = h("div",{class:"offers"});
+  (j.offres||[]).forEach((o,i) => {
+    const f = (t,v) => v ? h("div",{}, h("dt",{text:t}), h("dd",{text:propre(v)})) : null;
+    const card = h("article",{class:"offer"},
+      h("div",{class:"h"}, h("div",{}, h("h3",{text:(i+1)+". "+propre(o.titre)}), h("div",{class:"emp",text:propre(o.employeur)})),
+        h("div",{style:"display:flex;gap:6px;flex-wrap:wrap"}, o.type?h("span",{class:"tag",text:propre(o.type)}):null, o.deja_vu?h("span",{class:"tag",text:"déjà vue"}):null)),
+      o.pourquoi ? h("p",{text:propre(o.pourquoi)}) : null,
+      h("dl",{}, f("Lieu",o.lieu), f("Salaire",o.salaire_texte||"non indiqué"), f("Télétravail",o.teletravail||"non indiqué"), f("Avantages",o.avantages), f("Expérience demandée",o.experience), f("Publiée",o.publiee)));
+    if(o.cv){
+      const cv = h("div",{class:"cv"}, h("b",{text:"Ton CV pour cette offre : « "+propre(o.cv.titre)+" »"}));
+      if(o.cv.profil) cv.append(h("p",{text:propre(o.cv.profil)}));
+      if(o.cv.ecart) cv.append(h("p",{}, h("b",{text:"Écart à connaître : "}), propre(o.cv.ecart)));
+      if(o.cv.asset_id){ const b = h("button",{class:"btn paper small",style:"align-self:flex-start"},"Télécharger le CV adapté"); b.addEventListener("click",()=>telecharger(o.cv.asset_id, o.cv.fichier||("CV_"+(i+1)+".pdf"), b)); cv.append(b); }
+      else cv.append(h("p",{text:"Le PDF n'a pas pu être généré pour cette offre."}));
+      card.append(cv);
+    }
+    if(o.message){
+      const b = h("button",{class:"btn ghost small"},"Copier le message");
+      b.addEventListener("click",()=>copier(propre(o.message), b));
+      card.append(h("div",{}, h("dt",{style:"color:var(--slip-ink-2);font-size:13.5px;margin-bottom:6px",text:"Message LinkedIn pour le contact"}), h("p",{class:"msg",text:propre(o.message)}), h("div",{style:"margin-top:8px"}, b)));
+    }
+    const acts = h("div",{class:"acts"});
+    const u = safeUrl(o.lien); if(u) acts.append(h("a",{class:"btn paper small",href:u,target:"_blank",rel:"noopener",style:"text-decoration:none"},"Postuler"));
+    if(o.contact && safeUrl(o.contact.lien)) acts.append(h("a",{class:"btn ghost small",href:safeUrl(o.contact.lien),target:"_blank",rel:"noopener",style:"text-decoration:none"},"Contact : "+propre(o.contact.nom)+(o.contact.role?", "+propre(o.contact.role):"")));
+    else if(safeUrl(o.recherche_rh)) acts.append(h("a",{class:"btn ghost small",href:safeUrl(o.recherche_rh),target:"_blank",rel:"noopener",style:"text-decoration:none"},"Chercher un contact RH sur LinkedIn"));
+    card.append(acts);
+    wrap.append(card);
+  });
+  sec.append(wrap);
+  return sec;
+}
+function blocFinJob(j){
+  const sec = h("section",{class:"bloc"}, h("h2",{text:"Pour finir"}));
+  const dl = h("dl",{class:"facts",style:"grid-template-columns:1fr"});
+  if(j.fourchette) dl.append(h("div",{}, h("dt",{text:"Fourchette à annoncer"}), h("dd",{text:propre(j.fourchette)})));
+  if(j.ecartees) dl.append(h("div",{}, h("dt",{text:"Offres écartées"}), h("dd",{style:"font-weight:400;color:var(--ink-2);flex-basis:100%",text:propre(j.ecartees)})));
+  sec.append(dl);
+  if((j.sources||[]).length) sec.append(h("details",{class:"more"}, h("summary",{text:"Sources ("+j.sources.length+")"}), h("div",{class:"srcs"}, j.sources.map(s=>lien(s.t||s.u, s.u)))));
+  return sec;
+}
+
+/* ================= demandes et lancement ================= */
+function peutLancer(){ return !!(S.db && S.mcp && S.cfg); }
+function demandeActive(type){ return S.demandes.find(d => d.type===type && (d.status==="demandé"||d.status==="en cours") && minutesDepuis(d.cree_le) < MAX_ATTENTE_MIN) || null; }
+function derniereDemande(type){ return S.demandes.find(d => d.type===type) || null; }
+function renderRun(type){
+  const box = $(type+"-run"); box.replaceChildren();
+  if(!S.ready) return;
+  if(!peutLancer()){
+    box.append(h("div",{class:"run"}, h("div",{class:"line1",text: !window.claude ? "Ouvre cette page dans Claude pour lancer une analyse." : !S.cfg ? "Le site n'est pas encore relié à Claude." : "Le lien vers Claude n'est pas disponible dans cette vue."}), h("p",{text:"Tu peux quand même consulter les analyses déjà enregistrées."})));
+    return;
+  }
+  const a = demandeActive(type);
+  if(a){
+    const min = Math.max(0,Math.floor(minutesDepuis(a.cree_le)));
+    box.append(h("div",{class:"run"}, h("div",{class:"line1"}, h("span",{class:"pulse"}), type==="floss" ? "Claude collecte les données de marché" : "Claude cherche les offres à "+(a.ville||"")),
+      h("p",{text:(a.etape ? a.etape+". " : "")+"Lancé il y a "+(min<1?"moins d'une minute":min+" min")+". Tu peux fermer la page : le résultat s'affichera ici."})));
+    return;
+  }
+  const d = derniereDemande(type);
+  if(d && d.status==="échec" && minutesDepuis(d.cree_le) < 24*60)
+    box.append(h("div",{class:"run bad"}, h("div",{class:"line1",text:"La dernière analyse n'a pas abouti."}), h("p",{text:(d.erreur ? d.erreur+" " : "")+"Relance-la. Si ça recommence, ouvre Claude et écris : « traite mes demandes Floss & Job »."})));
+  else if(d && (d.status==="demandé"||d.status==="en cours") && minutesDepuis(d.cree_le) >= MAX_ATTENTE_MIN && minutesDepuis(d.cree_le) < 24*60)
+    box.append(h("div",{class:"run bad"}, h("div",{class:"line1",text:"La dernière analyse n'a pas répondu."}), h("p",{text:"Elle a été lancée il y a plus de "+MAX_ATTENTE_MIN+" minutes sans résultat. Tu peux la relancer."})));
+}
+async function lancer(type){
+  if(!peutLancer() || demandeActive(type)) return;
+  const trigger = type==="floss" ? S.cfg.floss_trigger : S.cfg.job_trigger;
+  const id = type+"-"+Date.now().toString(36);
+  const doc = {type, status:"demandé", cree_le:new Date().toISOString()};
+  if(type==="floss") doc.montant = montant();
+  else { doc.ville = ville(); doc.cv_asset = S.cv.asset_id; doc.cv_nom = S.cv.nom||""; S.jobSel = null; }
+  try{ await S.db.doc("demandes/"+id).set(doc); }
+  catch(e){ alerteRun(type,"La demande n'a pas pu être enregistrée ("+(e.code||"erreur")+")."); return; }
+  try{ await S.mcp.callTool(SERVER,"fire_trigger",{trigger_id:trigger}); }
+  catch(e){
+    const msg = e.code==="not_in_manifest"||e.code==="approval_required"||e.code==="consent_required" ? "Tu n'as pas autorisé la page à lancer Claude." : e.code==="server_not_connected" ? "Le connecteur Claude Code Remote n'est pas actif sur ton compte." : "Claude n'a pas pu être lancé ("+(e.code||"erreur")+").";
+    try{ await S.db.doc("demandes/"+id).set({...doc, status:"échec", erreur:msg}); }catch(_){}
+  }
+}
+function alerteRun(type,msg){ const box = $(type+"-run"); box.replaceChildren(h("div",{class:"run bad"}, h("div",{class:"line1",text:msg}))); }
+
+/* ================= navigation ================= */
+function voir(v){
+  for(const k of ["floss","job","guide"]){ $("view-"+k).hidden = k!==v; $("tab-"+k).setAttribute("aria-selected", String(k===v)); }
+  $("closing").hidden = false;
+  store("vue", v);
+  if(v==="floss") requestAnimationFrame(()=>dessinerProjection(montant()));
+  scrollTo({top:0});
+}
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => voir(t.dataset.view)));
+
+/* ================= saisies ================= */
+$("presets").append(...PRESETS.map(p => h("button",{class:"chip",type:"button",onclick:()=>{ $("montant").value = p; majMontant(); }}, num(p)+" €")));
+function majMontant(){ const m = montant(); $("montant").style.width = Math.max(2, String(m||"").length)+0.4+"ch"; store("montant", String(m)); if(m>0) renderFloss(); }
+let tm; $("montant").addEventListener("input", () => { clearTimeout(tm); tm = setTimeout(majMontant, 250); });
+$("villes").append(...VILLES.map(v => h("button",{class:"chip",type:"button",onclick:()=>{ $("ville").value = v; majVille(); }}, v)));
+function majVille(){ const v = ville(); $("ville").style.width = "min(100%,"+Math.max(4, v.length+0.6)+"ch)"; S.jobSel = null; store("ville", v); renderJob(); }
+let tv; $("ville").addEventListener("input", () => { clearTimeout(tv); tv = setTimeout(majVille, 300); });
+$("job-go").addEventListener("click", () => lancer("job"));
+
+/* ================= démarrage ================= */
+function renderAll(){ renderFloss(); renderJob(); renderRun("floss"); renderRun("job"); majEtat(); }
+function majEtat(){
+  const e = $("etat");
+  if(!S.ready){ e.textContent = "Connexion…"; return; }
+  if(!S.db){ e.textContent = "Hors de Claude : lecture impossible"; return; }
+  const d = flossCourant();
+  e.textContent = d ? "Marché : "+(d.seance||dateFr(d.date)) : "Aucune analyse enregistrée";
+}
+async function boot(){
+  const m0 = Number(store("montant")); if(m0>0) $("montant").value = m0;
+  const v0 = store("ville"); if(v0) $("ville").value = v0;
+  $("montant").style.width = Math.max(2, String(montant()).length)+0.4+"ch";
+  $("ville").style.width = "min(100%,"+Math.max(4, ville().length+0.6)+"ch)";
+  const vue = store("vue") || (location.hash||"").slice(1); if(["floss","job","guide"].includes(vue)) voir(vue);
+  renderAll();
+  const use = n => (window.claude && window.claude.use) ? window.claude.use(n).catch(()=>null) : Promise.resolve(null);
+  [S.db, S.mcp, S.assets, S.dl] = await Promise.all([use("db"), use("mcp"), use("assets"), use("downloads")]);
+  if(!S.db){ S.ready = true; renderAll(); return; }
+  const rows = snap => snap.docs.map(x => ({id:x.id, ...(x.data()||{})}));
+  const fail = () => {};
+  const vus = new Set(); const done = k => { vus.add(k); if(vus.size>=5) S.ready = true; renderAll(); };
+  setTimeout(() => { if(!S.ready){ S.ready = true; renderAll(); } }, 8000);
+  S.db.doc("config/main").onSnapshot(s => { S.cfg = s.exists ? s.data() : null; done("cfg"); }, fail);
+  S.db.doc("config/cv").onSnapshot(s => { S.cv = s.exists ? s.data() : null; done("cv"); }, fail);
+  S.db.collection("floss").orderBy("date","desc").limit(8).onSnapshot(s => { S.floss = rows(s); done("floss"); }, fail);
+  S.db.collection("jobs").orderBy("genere_le","desc").limit(12).onSnapshot(s => { S.jobs = rows(s); done("jobs"); }, fail);
+  S.db.collection("demandes").orderBy("cree_le","desc").limit(20).onSnapshot(s => { S.demandes = rows(s); done("dem"); }, fail);
+  setInterval(() => { if(demandeActive("floss")) renderRun("floss"); if(demandeActive("job")) renderRun("job"); }, 30000);
+}
+boot();
+</script>

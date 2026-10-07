@@ -1,0 +1,109 @@
+{
+ "date": "2026-10-08",
+ "seance": "clôtures du mercredi 7 octobre 2026",
+ "genere_le": "2026-10-08T09:30:00Z",
+ "bilan": "Wall Street reste près de ses records, porté par l'intelligence artificielle. L'Europe décroche : les taux d'emprunt grimpent, le pétrole est à 100 $ et le budget français inquiète.",
+ "indices": [
+  {"nom": "CAC 40", "niveau": 7769.21, "jour": -1.22, "mois": -6.6, "ytd": -4.7, "approx": false},
+  {"nom": "Stoxx Europe 600", "niveau": 630.25, "jour": -1.0, "mois": -3.0, "ytd": 6.4, "approx": false},
+  {"nom": "S&P 500", "niveau": 7801.77, "jour": -0.22, "mois": 1.7, "ytd": 14.0, "approx": true},
+  {"nom": "Nasdaq 100", "niveau": 30965, "jour": -0.3, "mois": 4.9, "ytd": 22.6, "approx": true},
+  {"nom": "MSCI World (en dollars)", "niveau": null, "jour": 0.57, "mois": null, "ytd": 13.7, "approx": true}
+ ],
+ "reperes": [
+  {"nom": "BCE, taux de dépôt", "valeur": "2,50 %", "note": "prochaine réunion le 29 octobre"},
+  {"nom": "Fed, taux directeur", "valeur": "3,75 à 4,00 %", "note": "prochaine réunion les 27 et 28 octobre"},
+  {"nom": "Taux à 10 ans, États-Unis", "valeur": "5,28 %", "note": "au plus haut depuis 2002"},
+  {"nom": "Taux à 10 ans, France", "valeur": "4,76 %", "note": "donnée du 6 octobre"},
+  {"nom": "Euro-dollar", "valeur": "1,126", "note": "−3 % sur un mois"},
+  {"nom": "Pétrole Brent", "valeur": "101 $", "note": "+66 % depuis janvier"},
+  {"nom": "Or", "valeur": "4 135 $", "note": "−5 % sur un mois"},
+  {"nom": "VIX, nervosité du marché américain", "valeur": "15,1", "note": "niveau calme"}
+ ],
+ "actus": [
+  {"titre": "La Fed prépare une nouvelle hausse", "fait": "Le compte rendu de septembre montre que la plupart des membres veulent encore relever les taux d'ici fin décembre.", "effet": "Des taux plus hauts pèsent sur les actions chères et sur les entreprises endettées."},
+  {"titre": "La France sous pression", "fait": "Le marché doute que le déficit revienne à 5 % du PIB en 2027. Société Générale a perdu 5,1 % et BNP Paribas 3,9 % mercredi.", "effet": "Les banques françaises sont en première ligne quand la dette de l'État se dégrade."},
+  {"titre": "Pétrole à 100 $", "fait": "Les attaques houthies et les incidents dans le détroit d'Ormuz font monter les prix.", "effet": "Les pétrolières en profitent, l'inflation aussi."},
+  {"titre": "Schneider Electric rachète PTC", "fait": "L'éditeur américain est racheté pour 22,6 Md$. Le titre Schneider a chuté d'environ 10 % lundi.", "effet": "Le marché juge l'opération chère."}
+ ],
+ "agenda": [
+  {"quand": "ven. 9 oct.", "quoi": "Confiance des ménages américains"},
+  {"quand": "mar. 13 oct.", "quoi": "Résultats de JPMorgan, début de la saison des résultats"},
+  {"quand": "mer. 14 oct.", "quoi": "Inflation américaine de septembre (3,4 % en août)"},
+  {"quand": "jeu. 15 oct.", "quoi": "Ventes au détail et prix à la production aux États-Unis"},
+  {"quand": "ven. 16 oct.", "quoi": "Chiffre d'affaires trimestriel de Schneider Electric"}
+ ],
+ "previsions": [
+  {"sujet": "Hausse de la Fed d'ici décembre", "valeur": "jusqu'à 70 % de chances", "source": "CME FedWatch", "date": "7 oct."},
+  {"sujet": "Hausse de la BCE d'ici le 17 décembre", "valeur": "84 % de chances", "source": "Veille banque centrale", "date": "6 oct."},
+  {"sujet": "Bénéfices du S&P 500 au 3e trimestre", "valeur": "hausse proche de 30 %", "source": "TheStreet", "date": "7 oct."},
+  {"sujet": "S&P 500 fin 2026", "valeur": "8 000 points", "source": "Goldman Sachs", "date": "mai 2026"},
+  {"sujet": "S&P 500 fin 2026", "valeur": "7 900 points, abaissé depuis 8 400", "source": "Yardeni Research", "date": "16 sept."},
+  {"sujet": "Stoxx 600 fin 2026", "valeur": "690 points", "source": "UBS", "date": "juillet 2026"}
+ ],
+ "secteurs": [
+  {"nom": "Énergie", "zone": "États-Unis", "ytd": 45.4, "mois": 0.1, "raison": "pétrole à 100 $"},
+  {"nom": "Technologie", "zone": "États-Unis", "ytd": 40.8, "mois": 8.0, "raison": "intelligence artificielle"},
+  {"nom": "Banques", "zone": "Europe", "ytd": 21.2, "mois": -4.0, "raison": "marges en hausse, stress sur la dette française"},
+  {"nom": "Industrie", "zone": "États-Unis", "ytd": 11.5, "mois": -1.8, "raison": ""},
+  {"nom": "Santé", "zone": "États-Unis", "ytd": 9.3, "mois": -2.2, "raison": "secteur défensif, en retard"},
+  {"nom": "Immobilier coté", "zone": "États-Unis", "ytd": 4.3, "mois": -5.7, "raison": "pénalisé par les taux"},
+  {"nom": "Défense", "zone": "Europe", "ytd": 0.3, "mois": -4.0, "raison": "pause après deux années fortes"},
+  {"nom": "Finance", "zone": "États-Unis", "ytd": -0.2, "mois": -6.7, "raison": "crédit plus cher"},
+  {"nom": "Consommation non essentielle", "zone": "États-Unis", "ytd": -5.9, "mois": -2.6, "raison": "budgets des ménages serrés"},
+  {"nom": "Luxe", "zone": "Monde", "ytd": -12.0, "mois": null, "raison": "demande chinoise faible"},
+  {"nom": "Automobile", "zone": "Europe", "ytd": -13.0, "mois": null, "raison": "concurrence chinoise, guerre des prix"}
+ ],
+ "etf": [
+  {"cle": "DCAM", "nom": "Amundi PEA Monde", "emetteur": "Amundi", "isin": "FR001400U5Q4", "expo": "Monde", "frais": 0.20, "encours": 1568, "perf1a": 19.5, "perf5a": null, "cours": 6.376, "cours_date": "7 oct.", "pea": true},
+  {"cle": "WPEA", "nom": "iShares MSCI World Swap PEA", "emetteur": "iShares", "isin": "IE0002XZSHO1", "expo": "Monde", "frais": 0.20, "encours": 2295, "perf1a": 20.8, "perf5a": null, "cours": 7.201, "cours_date": "7 oct.", "pea": true},
+  {"cle": "PSP5", "nom": "Amundi PEA S&P 500", "emetteur": "Amundi", "isin": "FR0011871128", "expo": "S&P 500", "frais": 0.12, "encours": 1247, "perf1a": 22.1, "perf5a": 95.1, "cours": 61.24, "cours_date": "7 oct.", "pea": true},
+  {"cle": "ESE", "nom": "BNP Paribas Easy S&P 500", "emetteur": "BNP Paribas", "isin": "FR0011550185", "expo": "S&P 500", "frais": 0.14, "encours": 3562, "perf1a": 21.7, "perf5a": 94.6, "cours": 35.38, "cours_date": "7 oct.", "pea": true},
+  {"cle": "PUST", "nom": "Amundi PEA Nasdaq-100", "emetteur": "Amundi", "isin": "FR0011871110", "expo": "Nasdaq 100", "frais": 0.30, "encours": 1317, "perf1a": 31.3, "perf5a": 121.6, "cours": 111.62, "cours_date": "6 oct.", "pea": true},
+  {"cle": "ETZ", "nom": "BNP Paribas Easy Stoxx Europe 600", "emetteur": "BNP Paribas", "isin": "FR0011550193", "expo": "Europe", "frais": 0.19, "encours": 1084, "perf1a": 14.4, "perf5a": 61.4, "cours": 20.80, "cours_date": "7 oct.", "pea": true},
+  {"cle": "PAEEM", "nom": "Amundi PEA Émergent", "emetteur": "Amundi", "isin": "FR0013412020", "expo": "Émergents", "frais": 0.30, "encours": 941, "perf1a": 35.1, "perf5a": 63.0, "cours": 37.37, "cours_date": "7 oct.", "pea": true}
+ ],
+ "actions": [
+  {"cle": "SAN", "nom": "Sanofi", "isin": "FR0000120578", "secteur": "Santé", "activite": "Laboratoire pharmaceutique français.", "fait": "Accord élargi avec Regeneron dans l'immunologie.", "cours": 71.81, "devise": "EUR", "per": 11.1, "per_pairs": 24.7, "analystes": 25, "avis": "Accumuler", "objectif": 94.06, "objectif_bas": 78, "objectif_haut": 112, "resultats": "30 oct.", "pea": true, "pour": "Valorisation basse pour le secteur, marge de 28 %.", "contre": "Le titre a baissé cette année, la confiance dans les futurs médicaments reste à regagner.", "filtres": [true, true, true, true], "notes": ["25 analystes, objectif à +31 %", "PER de 11 contre 25 pour ses pairs", "dette faible ; dépend beaucoup de son médicament vedette", "résultats le 30 octobre"]},
+  {"cle": "TTE", "nom": "TotalEnergies", "isin": "FR0000120271", "secteur": "Énergie", "activite": "Groupe pétrolier et gazier.", "fait": "Le Brent tient au-dessus de 100 $.", "cours": 75.42, "devise": "EUR", "per": 7.1, "per_pairs": 8.4, "analystes": 17, "avis": "Accumuler", "objectif": 88.0, "objectif_bas": 73.7, "objectif_haut": 100.0, "resultats": "29 oct.", "pea": true, "pour": "Bénéfice presque doublé avec le pétrole cher, dividende proche de 5 %.", "contre": "Bénéfice attendu en baisse en 2027, tout dépend du baril.", "filtres": [true, true, true, true], "notes": ["17 analystes, objectif à +17 %, de justesse", "PER de 7 contre 8 pour ses pairs", "dette faible", "résultats le 29 octobre"]},
+  {"cle": "SU", "nom": "Schneider Electric", "isin": "FR0000121972", "secteur": "Industrie", "activite": "Équipement électrique et automatismes.", "fait": "Rachat de PTC pour 22,6 Md$, titre en baisse d'environ 10 % lundi.", "cours": 254.55, "devise": "EUR", "per": 27.2, "per_pairs": 39.4, "analystes": 21, "avis": "Acheter", "objectif": 327.49, "objectif_bas": 262, "objectif_haut": 370, "resultats": "16 oct.", "pea": true, "pour": "Exposition aux centres de données.", "contre": "Rachat cher et mal accueilli, JP Morgan a abaissé son avis.", "filtres": [true, true, false, true], "notes": ["21 analystes, objectif à +29 %", "PER de 27 contre 39 pour ses pairs", "rachat contesté par le marché", "chiffre d'affaires le 16 octobre"]},
+  {"cle": "BNP", "nom": "BNP Paribas", "isin": "FR0000131104", "secteur": "Finance", "activite": "Première banque française.", "fait": "Titre en baisse de 3,9 % mercredi avec les craintes sur la dette française.", "cours": 91.40, "devise": "EUR", "per": 8.1, "per_pairs": 10.8, "analystes": 19, "avis": "Acheter", "objectif": 119.28, "objectif_bas": 96.5, "objectif_haut": 136, "resultats": "28 oct.", "pea": true, "pour": "Très peu chère, dividende supérieur à 6 %.", "contre": "En première ligne si la dette française se dégrade encore.", "filtres": [true, true, false, true], "notes": ["19 analystes, objectif à +30 %", "PER de 8 contre 11 pour ses pairs", "exposée à la dette française", "résultats le 28 octobre"]},
+  {"cle": "NVDA", "nom": "Nvidia", "isin": "US67066G1040", "secteur": "Technologie", "activite": "Puces pour l'intelligence artificielle.", "fait": "SpaceX veut emprunter 40 Md$ pour acheter ses puces.", "cours": 237.47, "devise": "USD", "per": 26.7, "per_pairs": null, "analystes": 61, "avis": "Achat fort", "objectif": 328.72, "objectif_bas": 180, "objectif_haut": 515, "resultats": "18 nov. (estimé)", "pea": false, "pour": "La demande dépasse l'offre, chiffre d'affaires attendu en hausse de 91 %.", "contre": "Quelques très gros clients, de plus en plus financés par la dette.", "filtres": [true, true, false, true], "notes": ["61 analystes, objectif à +38 %", "PER justifié par la croissance", "dépend de quelques gros clients", "résultats vers le 18 novembre"]}
+ ],
+ "choix": {
+  "socle": "DCAM",
+  "complement": "PAEEM",
+  "signal": "diversification",
+  "actions": ["SAN"],
+  "raisons": {
+   "DCAM": "ETF Monde aux frais annuels les plus bas du PEA (0,20 %), et sans frais de courtage chez BoursoBank à partir de 100 € par ordre.",
+   "PAEEM": "L'indice Monde ne contient aucun pays émergent : c'est la seule zone qu'il ajoute vraiment. Tendance favorable, mais un dollar fort joue contre.",
+   "SAN": "Passe les quatre filtres avec le plus grand écart à l'objectif des analystes."
+  }
+ },
+ "changer_avis": [
+  "Une inflation américaine nettement au-dessus de 3,6 % le 14 octobre.",
+  "Des résultats de Sanofi décevants le 30 octobre.",
+  "Une nouvelle poussée du dollar, qui pèserait sur les émergents."
+ ],
+ "vigilance": [
+  "Garde quelques mois de dépenses de côté avant d'investir.",
+  "Vise au moins 5 ans : c'est la durée qui déclenche l'avantage fiscal du PEA.",
+  "L'ETF Monde contient environ 70 % d'actions américaines : si le dollar baisse face à l'euro, ta performance baisse aussi."
+ ],
+ "inconnues": [
+  "La séance du 8 octobre n'était pas encore publiée.",
+  "Le niveau exact du Nasdaq 100 et du MSCI World au 7 octobre : valeurs approchées.",
+  "Pas de chiffre daté fiable pour comparer la valorisation des zones."
+ ],
+ "sources": [
+  {"t": "Boursorama, CAC 40", "u": "https://www.boursorama.com/bourse/indices/cours/1rPCAC/"},
+  {"t": "MarketScreener, Stoxx Europe 600", "u": "https://www.marketscreener.com/quote/index/STOXX-EUROPE-600-EUR-7477/"},
+  {"t": "Yahoo Finance, séance du 7 octobre", "u": "https://finance.yahoo.com/markets/live/stock-market-today-wednesday-october-7-dow-sp-500-nasdaq-080241833.html"},
+  {"t": "Trading Economics, indices", "u": "https://tradingeconomics.com/stocks"},
+  {"t": "ChartRow, secteurs du S&P 500", "u": "https://chartrow.com/sp500/sector-performance"},
+  {"t": "justETF, Amundi PEA Monde", "u": "https://www.justetf.com/fr/etf-profile.html?isin=FR001400U5Q4"},
+  {"t": "Zonebourse, consensus Sanofi", "u": "https://www.zonebourse.com/cours/action/SANOFI-4698/consensus/"},
+  {"t": "StockAnalysis, Nvidia", "u": "https://stockanalysis.com/stocks/nvda/forecast/"}
+ ]
+}
