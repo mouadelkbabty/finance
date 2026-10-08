@@ -58,6 +58,13 @@ button,input{font:inherit;color:inherit}
 .hint{color:var(--ink-3);font-size:14px;margin:0;max-width:62ch}
 .fresh{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;color:var(--ink-2);font-size:15px;padding-top:6px}
 .fresh strong{color:var(--ink);font-weight:600}
+.who{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.switch{display:inline-flex;align-items:center;gap:10px;background:none;border:0;padding:4px 0;cursor:pointer;color:var(--ink);font-weight:600}
+.switch .knob{width:42px;height:24px;border-radius:999px;background:var(--desk-3);border:1px solid var(--rule);position:relative;flex:none;transition:background .15s}
+.switch .knob::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:var(--ink-3);transition:transform .15s,background .15s}
+.switch[aria-checked="true"] .knob{background:var(--marker);border-color:var(--marker)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px);background:var(--marker-ink)}
+@media (prefers-reduced-motion:reduce){.switch .knob,.switch .knob::after{transition:none}}
 .cvrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:15px;color:var(--ink-2)}
 .cvrow strong{color:var(--ink);font-weight:600}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -283,6 +290,7 @@ details.more[open] summary{margin-bottom:12px}
         <input class="big city" id="ville" type="text" value="Grenoble" autocomplete="off" spellcheck="false" maxlength="40">
       </div>
       <div class="chips" id="villes" aria-label="Villes habituelles"></div>
+      <div class="who" id="who"></div>
       <div class="cvrow" id="cvrow"></div>
       <input id="cvfile" type="file" accept="application/pdf" hidden>
       <div class="actions">
@@ -392,7 +400,7 @@ document.addEventListener("focusout", hideTip);
 addEventListener("scroll", hideTip, {passive:true});
 
 /* ================= état ================= */
-const S = { db:null, mcp:null, assets:null, dl:null, cfg:null, cv:null, floss:[], jobs:[], demandes:[], jobSel:null, periode:"ytd", secPeriode:"ytd", ready:false };
+const S = { db:null, mcp:null, assets:null, dl:null, cfg:null, cv:null, cvAutre:null, moi:true, floss:[], jobs:[], demandes:[], jobSel:null, periode:"ytd", secPeriode:"ytd", ready:false };
 
 /* ================= calcul de l'ordre ================= */
 function frais(montant, emetteur){
@@ -722,17 +730,28 @@ function blocNotes(d){
 /* ================= rendu EMPLOI ================= */
 function ville(){ return $("ville").value.trim().replace(/\s+/g," "); }
 function cleVille(v){ return v.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""); }
-function jobPour(v){ const k = cleVille(v); return S.jobs.find(j=>cleVille(j.ville||"")===k) || null; }
+const MODE = () => S.moi ? "mouad" : "cv";
+const modeDe = j => j.profil === "cv" ? "cv" : "mouad";
+function cvActif(){ return S.moi ? S.cv : S.cvAutre; }
+function jobsDuMode(){ return S.jobs.filter(j => modeDe(j) === MODE()); }
+function jobPour(v){ const k = cleVille(v); return jobsDuMode().find(j=>cleVille(j.ville||"")===k) || null; }
+function renderWho(){
+  const box = $("who"); box.replaceChildren();
+  const b = h("button",{class:"switch",type:"button",role:"switch","aria-checked":String(S.moi)}, h("span",{class:"knob"}), "Profil de Mouad");
+  b.addEventListener("click", () => { S.moi = !S.moi; S.jobSel = null; store("profil", S.moi ? "mouad" : "cv"); renderJob(); renderRun("job"); });
+  box.append(b, h("span",{class:"hint",text: S.moi ? "Tes critères : Java, ta fourchette de salaire, tes exclusions, ton CV." : "Désactivé : Claude déduit le métier, le niveau et le salaire visé à partir du CV que tu déposes ici."}));
+}
 
 function renderCv(){
   const row = $("cvrow"); row.replaceChildren();
   if(!S.ready){ row.append("Chargement…"); return; }
-  if(S.cv && S.cv.asset_id){
-    row.append(h("span",{}, "CV utilisé : ", h("strong",{text:S.cv.nom||"CV.pdf"}), S.cv.envoye_le ? ", envoyé le "+dateFr(S.cv.envoye_le) : ""));
+  const cv = cvActif();
+  if(cv && cv.asset_id){
+    row.append(h("span",{}, S.moi ? "Ton CV : " : "CV de la personne : ", h("strong",{text:cv.nom||"CV.pdf"}), cv.envoye_le ? ", envoyé le "+dateFr(cv.envoye_le) : ""));
     row.append(h("button",{class:"btn ghost small",disabled:!S.assets,onclick:()=>$("cvfile").click()},"Changer de CV"));
   }else{
-    row.append(h("span",{text:"Aucun CV pour l'instant. Dépose-le en PDF : chaque offre recevra sa version adaptée."}));
-    row.append(h("button",{class:"btn ghost small",disabled:!S.assets,onclick:()=>$("cvfile").click()},"Déposer mon CV"));
+    row.append(h("span",{text: S.moi ? "Aucun CV pour l'instant. Dépose-le en PDF : chaque offre recevra sa version adaptée." : "Dépose le CV de la personne en PDF. Ton propre CV reste enregistré à part."}));
+    row.append(h("button",{class:"btn ghost small",disabled:!S.assets,onclick:()=>$("cvfile").click()}, S.moi ? "Déposer mon CV" : "Déposer son CV"));
   }
   if(!S.assets) row.append(h("span",{class:"hint",text:"L'envoi de fichier n'est pas disponible dans cette vue."}));
 }
@@ -741,36 +760,41 @@ $("cvfile").addEventListener("change", async e => {
   const row = $("cvrow"); row.replaceChildren("Envoi de "+f.name+"…");
   try{
     const up = await S.assets.upload(f,{type:"application/pdf"});
-    await S.db.doc("config/cv").set({asset_id:up.id, nom:f.name, taille:up.sizeBytes, envoye_le:new Date().toISOString()});
+    await S.db.doc(S.moi ? "config/cv" : "config/cv_autre").set({asset_id:up.id, nom:f.name, taille:up.sizeBytes, envoye_le:new Date().toISOString()});
   }catch(err){ renderCv(); $("cvrow").append(h("span",{style:"color:var(--down)",text:"L'envoi a échoué ("+(err.code||"erreur")+"). Vérifie que c'est un PDF de moins de 20 Mo et réessaie."})); }
 });
 
 function renderJob(){
-  renderCv();
-  const v = ville(), act = demandeActive("job"), j = S.jobSel ? S.jobs.find(x=>x.id===S.jobSel) : jobPour(v);
+  renderWho(); renderCv();
+  const v = ville(), act = demandeActive("job"), j = S.jobSel ? jobsDuMode().find(x=>x.id===S.jobSel) : jobPour(v);
   const go = $("job-go"), hint = $("job-hint");
   const existe = jobPour(v);
   const recent = existe && minutesDepuis(existe.genere_le||existe.date) < 3*24*60;
   go.textContent = !v ? "Chercher les offres" : (existe ? "Relancer la recherche à "+v : "Chercher les offres à "+v);
-  go.disabled = !v || !!act || !peutLancer() || !(S.cv && S.cv.asset_id);
-  hint.textContent = !(S.cv && S.cv.asset_id) && S.ready ? "Dépose ton CV pour lancer une recherche."
+  const cv = cvActif();
+  go.disabled = !v || !!act || !peutLancer() || !(cv && cv.asset_id);
+  hint.textContent = !(cv && cv.asset_id) && S.ready ? (S.moi ? "Dépose ton CV pour lancer une recherche." : "Dépose le CV de la personne pour lancer une recherche.")
     : recent ? "Tu as déjà une recherche à "+existe.ville+" du "+dateFr(existe.genere_le||existe.date)+". Elle est affichée plus bas ; la relancer consomme du quota."
     : "Lance Claude pour 10 à 20 minutes. La recherche consomme ton quota : une par ville tous les trois jours suffit.";
   const out = $("job-out"); out.replaceChildren();
   if(!S.ready) return;
-  if(S.jobs.length>1) out.append(h("section",{class:"bloc",style:"padding-top:24px"}, h("h3",{text:"Tes recherches"}), h("div",{class:"past"}, S.jobs.map(x=>h("button",{class:"chip","aria-pressed":String(j&&x.id===j.id),onclick:()=>{ S.jobSel=x.id; renderJob(); }}, (x.ville||"?")+", "+dateFr(x.genere_le||x.date,{day:"numeric",month:"short"}))))));
-  if(!j){ out.append(h("div",{class:"empty"}, h("b",{text:"Les offres apparaîtront ici."}), "Pour chaque offre : le lien pour postuler, un contact au recrutement, un message LinkedIn et ton CV adapté à télécharger.")); return; }
+  const liste = jobsDuMode();
+  if(liste.length>1) out.append(h("section",{class:"bloc",style:"padding-top:24px"}, h("h3",{text:S.moi?"Tes recherches":"Recherches pour d'autres CV"}), h("div",{class:"past"}, liste.map(x=>h("button",{class:"chip","aria-pressed":String(j&&x.id===j.id),onclick:()=>{ S.jobSel=x.id; renderJob(); }}, (x.personne&&modeDe(x)==="cv"?propre(x.personne)+", ":"")+(x.ville||"?")+", "+dateFr(x.genere_le||x.date,{day:"numeric",month:"short"}))))));
+  if(!j){ out.append(h("div",{class:"empty"}, h("b",{text:"Les offres apparaîtront ici."}), "Pour chaque offre : le lien pour postuler, un contact au recrutement, un message LinkedIn et "+(S.moi?"ton":"le")+" CV adapté à télécharger.")); return; }
   out.append(blocBilanJob(j), blocSalaires(j), blocOffres(j), blocFinJob(j));
 }
 function blocBilanJob(j){
-  return h("section",{class:"bloc",style:"padding-top:26px"}, h("h2",{text:(j.offres||[]).length+" offres retenues à "+(j.ville||"")}),
+  return h("section",{class:"bloc",style:"padding-top:26px"}, h("h2",{text:(j.offres||[]).length+" offres retenues à "+(j.ville||"")+(modeDe(j)==="cv"&&j.personne?" pour "+propre(j.personne):"")}),
+    modeDe(j)==="cv"&&j.profil_deduit ? h("p",{class:"note",text:"Profil déduit du CV : "+propre(j.profil_deduit)}) : null,
     h("p",{class:"lede",text:propre(j.bilan)}), h("p",{class:"note",text:"Recherche du "+dateFr(j.genere_le||j.date,{day:"numeric",month:"long",year:"numeric"})+"."}));
 }
 function blocSalaires(j){
   const O = (j.offres||[]);
-  const cible = ((S.cfg||{}).cibles||{})[cleVille(j.ville||"")] || (S.cfg||{}).cible_defaut || null;
+  const autre = modeDe(j)==="cv";
+  const cible = autre ? (Array.isArray(j.cible) && j.cible.length===2 && j.cible.every(isNum) ? j.cible : null)
+    : ((S.cfg||{}).cibles||{})[cleVille(j.ville||"")] || (S.cfg||{}).cible_defaut || null;
   const avec = O.filter(o=>isNum(o.salaire_min)||isNum(o.salaire_max));
-  const sec = h("section",{class:"bloc"}, h("h2",{text:"Les salaires affichés face à ta cible"}));
+  const sec = h("section",{class:"bloc"}, h("h2",{text:cible?(autre?"Les salaires affichés face à sa cible":"Les salaires affichés face à ta cible"):"Les salaires affichés"}));
   if(!avec.length){ sec.append(h("p",{class:"lede",text:"Aucune de ces offres n'affiche de salaire."+(cible?" Ta fourchette à annoncer : "+cible[0]+" à "+cible[1]+" k€ brut par an.":"")})); return sec; }
   const vals = avec.flatMap(o=>[o.salaire_min,o.salaire_max]).filter(isNum).concat(cible||[]);
   const lo = Math.floor((Math.min(...vals)-2)/5)*5, hi = Math.ceil((Math.max(...vals)+2)/5)*5, X = v => (v-lo)/(hi-lo)*100;
@@ -784,7 +808,7 @@ function blocSalaires(j){
       h("div",{class:"track"}, cible?h("div",{class:"band",style:"left:"+X(cible[0])+"%;width:"+(X(cible[1])-X(cible[0]))+"%"}):null, isNum(a)?h("div",{class:"rng",style:"left:"+X(a)+"%;width:"+Math.max(0,X(b)-X(a))+"%"}):null),
       h("div",{class:"val"+(isNum(a)?"":" na"),style:isNum(a)?"":"color:var(--ink-3)",text:isNum(a)?(a===b?k(a)+" k€":k(a)+"–"+k(b)+" k€")+(/estimation/i.test(o.salaire_texte||"")?" *":""):"non indiqué"})));
   }
-  box.append(h("div",{class:"legend",style:"padding-top:8px"}, h("span",{}, h("i",{style:"background:var(--s1)"}),"Salaire affiché, en k€ brut par an"), cible?h("span",{}, h("i",{style:"background:rgba(244,222,92,.4)"}),"Ta cible : "+cible[0]+" à "+cible[1]+" k€"):null, h("span",{text:"Échelle de "+lo+" à "+hi+" k€"}), estime?h("span",{text:"* estimation du site d'annonces, pas de l'employeur"}):null));
+  box.append(h("div",{class:"legend",style:"padding-top:8px"}, h("span",{}, h("i",{style:"background:var(--s1)"}),"Salaire affiché, en k€ brut par an"), cible?h("span",{}, h("i",{style:"background:rgba(244,222,92,.4)"}),(autre?"Sa cible estimée : ":"Ta cible : ")+cible[0]+" à "+cible[1]+" k€"):null, h("span",{text:"Échelle de "+lo+" à "+hi+" k€"}), estime?h("span",{text:"* estimation du site d'annonces, pas de l'employeur"}):null));
   sec.append(box);
   return sec;
 }
@@ -815,7 +839,7 @@ function blocOffres(j){
       o.pourquoi ? h("p",{text:propre(o.pourquoi)}) : null,
       h("dl",{}, f("Lieu",o.lieu), f("Salaire",o.salaire_texte||"non indiqué"), f("Télétravail",o.teletravail||"non indiqué"), f("Avantages",o.avantages), f("Expérience demandée",o.experience), f("Publiée",o.publiee)));
     if(o.cv){
-      const cv = h("div",{class:"cv"}, h("b",{text:"Ton CV pour cette offre : « "+propre(o.cv.titre)+" »"}));
+      const cv = h("div",{class:"cv"}, h("b",{text:(modeDe(j)==="cv"?"CV adapté à cette offre : « ":"Ton CV pour cette offre : « ")+propre(o.cv.titre)+" »"}));
       if(o.cv.profil) cv.append(h("p",{text:propre(o.cv.profil)}));
       if(o.cv.ecart) cv.append(h("p",{}, h("b",{text:"Écart à connaître : "}), propre(o.cv.ecart)));
       if(o.cv.asset_id){ const b = h("button",{class:"btn paper small",style:"align-self:flex-start"},"Télécharger le CV adapté"); b.addEventListener("click",()=>telecharger(o.cv.asset_id, o.cv.fichier||("CV_"+(i+1)+".pdf"), b)); cv.append(b); }
@@ -877,7 +901,7 @@ async function lancer(type){
   const id = type+"-"+Date.now().toString(36);
   const doc = {type, status:"demandé", cree_le:new Date().toISOString()};
   if(type==="floss") doc.montant = montant();
-  else { doc.ville = ville(); doc.cv_asset = S.cv.asset_id; doc.cv_nom = S.cv.nom||""; S.jobSel = null; }
+  else { const cv = cvActif(); doc.ville = ville(); doc.profil = MODE(); doc.cv_asset = cv.asset_id; doc.cv_nom = cv.nom||""; S.jobSel = null; }
   try{ await S.db.doc("demandes/"+id).set(doc); }
   catch(e){ alerteRun(type,"La demande n'a pas pu être enregistrée ("+(e.code||"erreur")+")."); return; }
   try{ await S.mcp.callTool(SERVER,"fire_trigger",{trigger_id:trigger}); }
@@ -919,6 +943,7 @@ function majEtat(){
 async function boot(){
   const m0 = Number(store("montant")); if(m0>0) $("montant").value = m0;
   const v0 = store("ville"); if(v0) $("ville").value = v0;
+  S.moi = store("profil") !== "cv";
   $("montant").style.width = Math.max(2, String(montant()).length)+0.4+"ch";
   $("ville").style.width = "min(100%,"+Math.max(4, ville().length+0.6)+"ch)";
   const vue = store("vue") || (location.hash||"").slice(1); if(["floss","job","guide"].includes(vue)) voir(vue);
@@ -928,10 +953,11 @@ async function boot(){
   if(!S.db){ S.ready = true; renderAll(); return; }
   const rows = snap => snap.docs.map(x => ({id:x.id, ...(x.data()||{})}));
   const fail = () => {};
-  const vus = new Set(); const done = k => { vus.add(k); if(vus.size>=5) S.ready = true; renderAll(); };
+  const vus = new Set(); const done = k => { vus.add(k); if(vus.size>=6) S.ready = true; renderAll(); };
   setTimeout(() => { if(!S.ready){ S.ready = true; renderAll(); } }, 8000);
   S.db.doc("config/main").onSnapshot(s => { S.cfg = s.exists ? s.data() : null; done("cfg"); }, fail);
   S.db.doc("config/cv").onSnapshot(s => { S.cv = s.exists ? s.data() : null; done("cv"); }, fail);
+  S.db.doc("config/cv_autre").onSnapshot(s => { S.cvAutre = s.exists ? s.data() : null; done("cvAutre"); }, fail);
   S.db.collection("floss").orderBy("date","desc").limit(8).onSnapshot(s => { S.floss = rows(s); done("floss"); }, fail);
   S.db.collection("jobs").orderBy("genere_le","desc").limit(12).onSnapshot(s => { S.jobs = rows(s); done("jobs"); }, fail);
   S.db.collection("demandes").orderBy("cree_le","desc").limit(20).onSnapshot(s => { S.demandes = rows(s); done("dem"); }, fail);
